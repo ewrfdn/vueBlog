@@ -157,7 +157,7 @@ export default {
         margin-top: 30px;
         .upload-button-div{
              float: left;
-              width: 200px;
+              width: 200px ;
              height: 60px;
              .upload-button{
             width: 150px;

@@ -8,16 +8,12 @@
     <div>
     <el-menu :default-active="activeIndex"  class="navList"  mode="horizontal" @select="handleSelect">
         <el-menu-item index="1" class="item">home
-            
         </el-menu-item>
         <el-menu-item index="2" class="item">about</el-menu-item>
         <el-menu-item index="3" class="item" >list</el-menu-item>
         <el-menu-item index="4" class="item">tool</el-menu-item>
         </el-menu>
     </div>    
-    <div>
-      <el-input  placeholder="请输入内容"></el-input>
-    </div>
    
   </el-col>
   <el-col :span="4"><div class="grid-content bg-purple"></div></el-col>

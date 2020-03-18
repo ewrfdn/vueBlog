@@ -76,9 +76,9 @@ export default {
     
 }
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .contain{
-    width: 100%;
+    // width: 100%;
     margin: 0 auto;
     max-width: 600px;
     background: #fff;
@@ -91,7 +91,7 @@ export default {
         }
     .el-upload__tip{
       font-size:1em;
-      color: #242424;
+      color: #606060;
     }
     
 }

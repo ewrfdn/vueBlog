@@ -1,14 +1,19 @@
 <template>
 <div class="home">
+    <fv-NavigationPanel class="nav" :expand=false 
+    :theme="theme"
+     title="张晖的博客"
+     :showBack="false" >
+    </fv-NavigationPanel>
     <div class="background">
         <img src="../pic/timg.jpg" alt="" class="bg">
-        <div :class="{dark:darkMode}" class="mask"></div>
+        <div :class="{dark:darkmode}" class="mask"></div>
     </div>
-    <div>
+    <div class="out">
             <div class="star-menu">
                 <div class="left-part">
                     <div class="title-div">
-                      <h2 class="partTit" :class="{darkFont:darkMode,lightFont:!darkMode}"> 资讯</h2>
+                      <h2 class="partTit" :class="{darkFont:darkmode,lightFont:!darkmode}"> 资讯</h2>
                     </div>
                     <div class="left-part-content">
                         <middleTile class="articleTile" color="#c33" url="/#/t" time=5 profile="打游戏完全足够：马斯克称SpaceX太空互联网延迟仅20毫秒" title="每日新闻"></middleTile>
@@ -19,11 +24,25 @@
                     </div>
                 </div>
                 <div class='right-part'>
-                  <div>
+                  <div class="part">
                      <div class="title-div">
-                      <h2 class="partTit" :class="{darkFont:darkMode,lightFont:!darkMode}"> 资讯</h2>
+                      <h2 class="partTit" :class="{darkFont:darkmode,lightFont:!darkmode}"> 管理</h2>
                     </div>
-                  <smallTile></smallTile>
+                  <smallTile class="iconTile"></smallTile>
+                  <smallTile class="iconTile"></smallTile>
+                  <smallTile class="iconTile"></smallTile>
+                  <smallTile class="iconTile"></smallTile>
+                  <smallTile class="iconTile"></smallTile>
+                  </div>
+                  <div class="part">
+                     <div class="title-div">
+                      <h2 class="partTit" :class="{darkFont:darkmode,lightFont:!darkmode}"> 工具</h2>
+                    </div>
+                  <smallTile class="iconTile"></smallTile>
+                  <smallTile class="iconTile"></smallTile>
+                  <smallTile class="iconTile"></smallTile>
+                  <smallTile class="iconTile"></smallTile>
+                  <smallTile class="iconTile"></smallTile>
                   </div>
                 </div>
             </div>
@@ -38,9 +57,20 @@ import middleTile from "../components/middle-tile"
 import smallTile from "../components/smallTile"
 export default {
     name: 'home',
+    created(){
+        var storage=window.localStorage;
+      if(storage.theme==="dark"){
+        this.darkmode=true
+        this.theme="dark";
+      }else{
+        this.darkmode=false;
+        this.theme="light";
+      }
+    },
     data(){
       return{
-        darkMode:"true"
+        darkmode:"true",
+        theme:"dark"
       }
     },
     components: {
@@ -52,6 +82,17 @@ export default {
 
 <style lang="less">
 .home {
+  .nav {
+    position: fixed;
+    left: 0px;
+    top: 0;
+    z-index: 100000;
+ 
+}
+.out{
+  margin-left: 60px;
+  overflow-x: hidden;
+}
     width: 100%;
     height: 100%;
     .darkFont{
@@ -84,11 +125,45 @@ export default {
               float: left;
               margin: 2px;
             }
+
+              .left-part-content::after{
+                   content: "";
+            display: block;
+            clear: both;
+              }
+
+             .left-part::after {
+            content: "";
+            display: block;
+            clear: both;
+        }
         }
 
         .right-part {
             float: left;
             width: 50%;
+            .iconTile{
+              float: left;
+              margin: 3px;
+            }
+        }
+             .right-part::after {
+            content: "";
+            display: block;
+            clear: both;
+        }
+           .part::after {
+            content: "";
+            display: block;
+            clear: both;
+        }
+
+        @media screen and (max-width: 750px) {
+         .right-part,.left-part{
+            float: none ;
+            width: 90%;
+         }
+          
         }
 
         .star-menu::after {

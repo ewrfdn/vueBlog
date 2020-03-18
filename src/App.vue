@@ -1,15 +1,8 @@
 <template>
-<div id="app">
-    <fv-NavigationPanel class="nav" :expand=false 
-    theme="dark"
-     title="张晖的博客"
-     :showBack="false" >
-        
-    </fv-NavigationPanel>
-    <router-view class="out">
 
+    <router-view >
     </router-view>
-</div>
+    
 </template>
 
 <script>
@@ -26,14 +19,12 @@ export default {
     padding: 0;
 }
 .out{
-      margin-left:60px;
+    margin-left: 50px;
 }
 
-.nav {
-    position: fixed;
-    left: 0px;
-    top: 0;
-    z-index: 1000;
-
-}
+//   .drop{
+//             font-size: 1em;
+//             line-height: 50px !important;
+//             width: 150px;
+//         }
 </style>>
