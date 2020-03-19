@@ -127,10 +127,10 @@ export default {
 
 .mainPage {
   max-width: 1024px;
-  margin: 20px auto;
+  margin: 0px auto;
   .face-photo {
     width: 80%;
-    margin: 0px auto;
+    margin: 100px auto;
     min-height: 100px;
     .uploadPhoto{
       max-width: 1024px;
