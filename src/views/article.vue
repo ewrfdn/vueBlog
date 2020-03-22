@@ -2,6 +2,7 @@
   <div class="main-div" :class="{darkBg0:darkmode}">
     <nav-bar :darkmode="darkmode"></nav-bar>
     <div class="contain">
+
       <div class="cover-pic">
         <img src="../pic/timg.jpg" />
       </div>
@@ -25,12 +26,18 @@
       <div class="context-div" v-html="article.context"></div>
       <div class="context-foot">
         <div class="tag-div"> 
-          <el-tag v-for = "(item,index) in article.theme" :key=index >{{item}}</el-tag>
+        <div :class="{darkFont1:darkmode}" ><p v-cloak>最后更新于：&nbsp;{{article.updateTime}} </p> </div>
+          <tag-vue v-for = "(item,index) in article.theme" :key=index  :context="item"></tag-vue>
         </div>
       </div>
     </div>
     <div class="recommend-div" :class="{darkBg1:darkmode}">
+
       <div class="inner-div">
+        <div class="recommend-head" :class="{darkFont0:darkmode}">
+          <h2>推荐阅读</h2>
+          <hr>
+        </div>
         <div class="card-contain">
           <recommend-card-vue class="card" :darkmode="darkmode"></recommend-card-vue>
           <recommend-card-vue class="card" :darkmode="darkmode"></recommend-card-vue>
@@ -57,25 +64,41 @@ import navBar from "../components/navBar1.vue";
 import recommendCardVue from "../components/recommendCard.vue";
 import gotoTopVue from "../components/gotoTop.vue";
 import settingVue from "../components/setting.vue";
+import tagVue from '../components/tag.vue';
+
 export default {
   created() {
-    this.getData();
+    var url="/api/article?id="+this.id;
+    this.getData(url).then(this.processData,function(){
+      console.log("err")
+    });
     this.getLocalStorage();
+  
+
+    
   },
   mounted() {
-    if (this.darkmode) {
+    if (this.darkmode&&!this.defaultContext) {
       this.changeColor();
+    }
+  },
+  props:{
+    id:{
+      default:1,
+
     }
   },
   data() {
     return {
-      darkmode: true,
+      darkmode: false,
       closeSetting: true,
       defaultContext:false,
+      followSystem:true,
       article: {
         title: "这是文章标题",
         context: "<p>默认文章内容</p>",
         time: "1970-1-1",
+        updateTime:"1970-1-2",
         count: "0",
         star: "0",
         theme: "javascript   typesript   vue"
@@ -103,7 +126,27 @@ export default {
         context[i].className = "a";
       }
     },
-    getData:function(){
+    getData:  function(url){
+      var promise=new Promise((resolve,reject)=>{
+      var xhr=new XMLHttpRequest();
+      xhr.onreadystatechange=function(){
+        if(xhr.readyState!=4)return;
+        if(xhr.readyState==4&&xhr.status==200){
+          resolve(xhr.responseText)
+
+        }else{
+          reject()
+        }
+      };
+      xhr.open('get',url);
+      xhr.send(null)
+    })
+    return promise;
+    },
+    processData:function(data){
+      // data=data.split('\n').join("<br>")
+      // data=data.split('\r').join("<br>")
+      this.article=JSON.parse(data)
       this.article.theme=this.article.theme.split(' ');
       for(var i=0;i<this.article.theme.length;i++){
         if (!this.article.theme[i]){
@@ -114,13 +157,14 @@ export default {
     },
     getLocalStorage:function(){
          var storage = window.localStorage;
+
     if (storage.autoTheme=="false" &&storage.followSystem=="false") {
        if (storage.theme === "dark") {
         this.darkmode = true;
       } else {
         this.darkmode = false;
       }
-    } else if(storage.followSystem=="true"){
+    } else if(storage.followSystem=="true"||this.followSystem){
          if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 this.darkmode = true;}
         else{
@@ -132,16 +176,16 @@ export default {
     this.defaultContext=storage.defaultContext=="true"?true:false
     }
     
-    
   },
   components: {
     navBar,
     recommendCardVue,
     gotoTopVue,
-    settingVue
+    settingVue,
+    tagVue,
   },
   watch: {
-    darkmode: function(val) {
+    darkmode:  function(val) {
       if (!val||!this.defaultContext) {
         this.removeClass();
       } else {
@@ -244,16 +288,19 @@ export default {
 
     }
     .context-foot{
+      min-height: 200px;
+      position: relative;
       .tag-div{
-         .el-tag{
-           margin-left: 20px;
-           border: none;
-           color:#fff  !important;
-           font-weight: 600;
-           background:#018;
-           border-radius: 15px;
-         }
-
+        position: absolute;
+        top: 0;
+        div{
+          width: 200px;
+          height: 50px;
+          font-size: 0.8em;
+          line-height: 50px;
+          text-align: center;
+          color: #555;
+        }
       }
     }
   }
@@ -275,6 +322,17 @@ export default {
       height: 100%;
       margin: 0 auto;
       position: relative;
+      .recommend-head{
+        max-width: 1024px;
+        margin: 20px auto;
+        hr{
+          max-width: 100%;
+          margin-top: 10px;
+          height: 1px;
+          background: #ddd;
+          border: none;
+        }
+      }
 
       .button {
         width: 50px;

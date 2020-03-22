@@ -9,6 +9,7 @@
   :auto-upload="false"
   :on-success="getMsg"
   :on-change="fileChange"
+  :data="info"
   v-bind:limit="1"
   :on-remove="handleRemove">
   <i class="el-icon-plus"></i>
@@ -21,7 +22,7 @@
 </template>
 <script>
 export default {
-     props:["action","num","explan"],
+     props:["action","num","explan","info"],
     data() {
       return {
         dialogImageUrl: '',

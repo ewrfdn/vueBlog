@@ -50,9 +50,10 @@ const routes = [{
 
     },
     {
-        path: '/article',
+        path: '/article/:id',
         name: 'article',
         component: article,
+        props: true,
         meta: {
             title: "文章"
         }

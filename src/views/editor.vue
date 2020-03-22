@@ -3,10 +3,10 @@
 <navBar></navBar>
   <div class="mainPage">
     <div class="face-photo">
-      <uploadPhoto explan="请上传封面" class="uploadPhoto"  :action="photoAction" num='' ref="pic"></uploadPhoto>
+      <uploadPhoto explan="请上传封面" class="uploadPhoto"  :action="photoAction" num='' ref="pic" ></uploadPhoto>
     </div>
     <div class="form-div">
-      <form action="" id="submit-form">
+      <form action="/api/article" id="submit-form" method="post">
         <el-input  placeholder="请输入标题" v-model="submitForm.title" name=title
          class="input-tit" 
          prefix-icon="el-icon-search">
@@ -31,6 +31,7 @@
 var E = require("wangeditor");
 import uploadPhoto from "../components/upLoadSinglePic";
 import navBar from "../components/navBar1"
+import axios from '../../node_modules/axios'
 export default {
   mounted() {
     this.editor = new E("#toolBar", "#context");
@@ -55,13 +56,13 @@ export default {
     return {
       moibleView: false,
       editor:null,
-      photoAction:"",
+      photoAction:"/api/coverPhoto",
       submitForm:{
         title:"",
         preview:"",
         context:"",
         theme:"",
-      }
+      },
     };
   },
   methods: {
@@ -84,8 +85,18 @@ export default {
       }
     },
     submitHandle:function(){
-      this.$refs.pic.submitUpload()
-      let el=document.getElementById("submit-form").submit()
+      this.getPreview()
+      this.checkContext()
+      axios({
+          method: 'post',
+          url: '/api/article',
+          data:this.submitForm,
+          }).then( (response)=> {
+          this.photoAction="/api/coverPhoto"+"?id="+response.data
+            setTimeout(() => {
+            this.$refs.pic.submitUpload();
+            }, 100);
+         })
     },
     onEdiorFocus:function(){
 
@@ -94,9 +105,10 @@ export default {
       this.submitForm.context=this.editor.txt.html()
       this.getPreview()
       this.checkContext()
+
     },
     checkContext:function(){
-      this.submitForm.context=this.submitForm.context.split("'").join("\\'")
+      this.submitForm.context=this.editor.txt.html().split("'").join("\\'")
     },
     getPreview:function(){
       this.submitForm.preview=this.editor.txt.text();

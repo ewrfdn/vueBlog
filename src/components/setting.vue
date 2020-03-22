@@ -112,11 +112,10 @@ export default {
         this.startMenu=storage.startMenu=="true"?true:false;;
         this.defaultContext=storage.defaultContext=="true"?true:false;;
         this.reduceEffect=storage.reduceEffect=="true"?true:false;;
-        this.autoTheme=storage.autoTheme=="true"?true:false;;
+        this.autoTheme=storage.autoTheme=="true"?true:false;
     },
   props: {
     darkmode: {
-      default: false
     },
     value: {
       default: true
@@ -143,12 +142,13 @@ export default {
   watch: {
     darkTheme: function(val) {
       var storage = window.localStorage;
-        this.$parent.darkmode = val;
-
+      this.$parent.darkmode = val;
       if (val) {
         storage.theme = "dark";
+        this.defaultContext=true;
       } else {
         storage.theme = "light";
+        this.defaultContext=false;
       }
     },
     value: function(val) {
@@ -163,25 +163,28 @@ export default {
                 this.darkTheme=true;
                 this.$parent.darkmode=true
             }else{
-                 this.darkTheme=false;
+                this.darkTheme=false;
                 this.$parent.darkmode=false
             }
         }
     },
     followSystem:function(val){
         var storage = window.localStorage;
+        this.$parent.followSystem = val;
         if(val){
         storage.followSystem=true;
            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 this.$parent.darkmode = val;
                 this.darkTheme=true;
-                }
-        }else{
+                }else{
             storage.followSystem=false;
             this.darkTheme=false;
-
-
         }
+        }else{
+           storage.followSystem=false;
+        }
+            
+        
     },
     startMenu:function(val){
       var storage = window.localStorage;
