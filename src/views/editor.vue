@@ -1,7 +1,7 @@
 <template>
 <div>
 <navBar></navBar>
-  <div class="mainPage">
+  <div class="mainPage" >
     <div class="face-photo">
       <uploadPhoto explan="请上传封面" class="uploadPhoto"  :action="photoAction" num='' ref="pic" ></uploadPhoto>
     </div>

@@ -6,16 +6,45 @@ import tank from "../views/tank.vue"
 import editor from "../views/editor.vue"
 import hello from "../views/view.vue"
 import article from "../views/article.vue"
+import index from "../views/index.vue"
+import articleList from "../components/articleList.vue"
+import hot from "../components/hot.vue"
+
 Vue.use(VueRouter)
 
 const routes = [{
         path: '/',
         name: 'home',
-        component: Home,
+        component: index,
+        redirect: "/home",
         meta: {
             title: "home"
-        }
+        },
+        children: [{
+            path: 'home',
+            component: articleList,
+        }, {
+            path: 'hot',
+            component: hot,
+        }, ]
     },
+    // {
+    //     path: '/home',
+    //     name: 'home',
+    //     component: index,
+    //     meta: {
+    //         title: "home"
+    //     },
+    //     childern: [{
+    //             path: 'articleList',
+    //             component: articleList,
+
+    //         },
+    //         {
+
+    //         }
+    //     ]
+    // },
     {
         path: '/login',
         name: 'login',
@@ -43,7 +72,7 @@ const routes = [{
     }, {
         path: '/view',
         name: 'v',
-        component: hello,
+        component: articleList,
         meta: {
             title: "test"
         },

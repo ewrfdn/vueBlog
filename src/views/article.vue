@@ -2,7 +2,6 @@
   <div class="main-div" :class="{darkBg0:darkmode}">
     <nav-bar :darkmode="darkmode"></nav-bar>
     <div class="contain">
-
       <div class="cover-pic">
         <img src="../pic/timg.jpg" />
       </div>
@@ -25,18 +24,19 @@
       </div>
       <div class="context-div" v-html="article.context"></div>
       <div class="context-foot">
-        <div class="tag-div"> 
-        <div :class="{darkFont1:darkmode}" ><p v-cloak>最后更新于：&nbsp;{{article.updateTime}} </p> </div>
-          <tag-vue v-for = "(item,index) in article.theme" :key=index  :context="item"></tag-vue>
+        <div class="tag-div">
+          <div :class="{darkFont1:darkmode}">
+            <p v-cloak>最后更新于：&nbsp;{{article.updateTime}}</p>
+          </div>
+          <tag-vue v-for="(item,index) in article.theme" :key="index" :context="item"></tag-vue>
         </div>
       </div>
     </div>
     <div class="recommend-div" :class="{darkBg1:darkmode}">
-
       <div class="inner-div">
         <div class="recommend-head" :class="{darkFont0:darkmode}">
           <h2>推荐阅读</h2>
-          <hr>
+          <hr />
         </div>
         <div class="card-contain">
           <recommend-card-vue class="card" :darkmode="darkmode"></recommend-card-vue>
@@ -64,41 +64,37 @@ import navBar from "../components/navBar1.vue";
 import recommendCardVue from "../components/recommendCard.vue";
 import gotoTopVue from "../components/gotoTop.vue";
 import settingVue from "../components/setting.vue";
-import tagVue from '../components/tag.vue';
+import tagVue from "../components/tag.vue";
 
 export default {
   created() {
-    var url="/api/article?id="+this.id;
-    this.getData(url).then(this.processData,function(){
-      console.log("err")
+    var url = "/api/article?id=" + this.id;
+    this.getData(url).then(this.processData, function() {
+      console.log("err");
     });
     this.getLocalStorage();
-  
-
-    
   },
   mounted() {
-    if (this.darkmode&&!this.defaultContext) {
+    if (this.darkmode && !this.defaultContext) {
       this.changeColor();
     }
   },
-  props:{
-    id:{
-      default:1,
-
+  props: {
+    id: {
+      default: 1
     }
   },
   data() {
     return {
       darkmode: false,
       closeSetting: true,
-      defaultContext:false,
-      followSystem:true,
+      defaultContext: false,
+      followSystem: true,
       article: {
         title: "这是文章标题",
         context: "<p>默认文章内容</p>",
         time: "1970-1-1",
-        updateTime:"1970-1-2",
+        updateTime: "1970-1-2",
         count: "0",
         star: "0",
         theme: "javascript   typesript   vue"
@@ -126,75 +122,77 @@ export default {
         context[i].className = "a";
       }
     },
-    getData:  function(url){
-      var promise=new Promise((resolve,reject)=>{
-      var xhr=new XMLHttpRequest();
-      xhr.onreadystatechange=function(){
-        if(xhr.readyState!=4)return;
-        if(xhr.readyState==4&&xhr.status==200){
-          resolve(xhr.responseText)
-
-        }else{
-          reject()
-        }
-      };
-      xhr.open('get',url);
-      xhr.send(null)
-    })
-    return promise;
+    getData: function(url) {
+      var promise = new Promise((resolve, reject) => {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState != 4) return;
+          if (xhr.readyState == 4 && xhr.status == 200) {
+            resolve(xhr.responseText);
+          } else {
+            reject();
+          }
+        };
+        xhr.open("get", url);
+        xhr.send(null);
+      });
+      return promise;
     },
-    processData:function(data){
+    processData: function(data) {
       // data=data.split('\n').join("<br>")
       // data=data.split('\r').join("<br>")
-      this.article=JSON.parse(data)
-      this.article.theme=this.article.theme.split(' ');
-      for(var i=0;i<this.article.theme.length;i++){
-        if (!this.article.theme[i]){
-          this.article.theme.splice(i,1);
+      this.article = JSON.parse(data);
+      this.article.theme = this.article.theme.split(" ");
+      for (var i = 0; i < this.article.theme.length; i++) {
+        if (!this.article.theme[i]) {
+          this.article.theme.splice(i, 1);
           i--;
         }
       }
     },
-    getLocalStorage:function(){
-         var storage = window.localStorage;
+    getLocalStorage: function() {
+      var storage = window.localStorage;
 
-    if (storage.autoTheme=="false" &&storage.followSystem=="false") {
-       if (storage.theme === "dark") {
-        this.darkmode = true;
-      } else {
-        this.darkmode = false;
-      }
-    } else if(storage.followSystem=="true"||this.followSystem){
-         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                this.darkmode = true;}
-        else{
+      if (storage.autoTheme == "false" && storage.followSystem == "false") {
+        if (storage.theme === "dark") {
+          this.darkmode = true;
+        } else {
           this.darkmode = false;
         }
-    }else{
-
+      } else if (storage.followSystem == "true" || this.followSystem) {
+        if (
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches
+        ) {
+          this.darkmode = true;
+        } else {
+          this.darkmode = false;
+        }
+      } else {
+      }
+      this.defaultContext = storage.defaultContext == "true" ? true : false;
     }
-    this.defaultContext=storage.defaultContext=="true"?true:false
-    }
-    
   },
   components: {
     navBar,
     recommendCardVue,
     gotoTopVue,
     settingVue,
-    tagVue,
+    tagVue
   },
   watch: {
-    darkmode:  function(val) {
-      if (!val||!this.defaultContext) {
+    darkmode: function(val) {
+      if (!val || !this.defaultContext) {
         this.removeClass();
       } else {
         this.changeColor();
       }
-    
+      if (val) {
+        document.body.style.background = "#242424";
+      }
     },
-    defaultContext:function(val){
-       if (!val||!this.defaultContext) {
+    defaultContext: function(val) {
+      if (!val || !this.defaultContext) {
         this.removeClass();
       } else {
         this.changeColor();
@@ -284,16 +282,15 @@ export default {
         }
       }
     }
-    .context-div{
-
+    .context-div {
     }
-    .context-foot{
+    .context-foot {
       min-height: 200px;
       position: relative;
-      .tag-div{
+      .tag-div {
         position: absolute;
         top: 0;
-        div{
+        div {
           width: 200px;
           height: 50px;
           font-size: 0.8em;
@@ -322,10 +319,10 @@ export default {
       height: 100%;
       margin: 0 auto;
       position: relative;
-      .recommend-head{
+      .recommend-head {
         max-width: 1024px;
         margin: 20px auto;
-        hr{
+        hr {
           max-width: 100%;
           margin-top: 10px;
           height: 1px;

@@ -177,7 +177,6 @@ export default {
                 this.$parent.darkmode = val;
                 this.darkTheme=true;
                 }else{
-            storage.followSystem=false;
             this.darkTheme=false;
         }
         }else{

@@ -141,7 +141,7 @@ export default {
 
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .main{
     .tit{
         color: #66CCFF;

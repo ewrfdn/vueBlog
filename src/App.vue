@@ -1,6 +1,6 @@
 <template>
 
-    <router-view >
+    <router-view class="page" >
     </router-view>
     
 </template>
@@ -18,9 +18,23 @@ export default {
     margin: 0;
     padding: 0;
 }
-.out{
-    margin-left: 50px;
+.darkFontG0 {
+  color: #fff !important;
 }
+.darkFontG1 {
+  color: #aaa !important;
+}
+.darkBgG0{
+  background: #101010 !important;
+}
+.darkBgG1 {
+  background: #242424 !important;
+}
+.darkBgG2 {
+  background: #303030 !important;
+}
+
+
 
 //   .drop{
 //             font-size: 1em;

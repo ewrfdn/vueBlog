@@ -1,28 +1,35 @@
 <template>
-  <div id="nav">
+  <div id="nav" :class="{darkBg:darkmode}">
       <el-row :gutter="30">
-  <el-col :span="6">
- <div class="grid-content bg-purple"></div>
+  <el-col :span="12">
+ <div class="part tit-div" ><p><span class="tit">张晖的博客</span ><span :class="{darkFont0:darkmode}">|写文章</span></p></div>
   </el-col>
-  <el-col :span="14">
-    <div>
-    <el-menu :default-active="activeIndex"  class="navList"  mode="horizontal" @select="handleSelect">
-        <el-menu-item index="1" class="item">home
-        </el-menu-item>
-        <el-menu-item index="2" class="item">about</el-menu-item>
-        <el-menu-item index="3" class="item" >list</el-menu-item>
-        <el-menu-item index="4" class="item">tool</el-menu-item>
-        </el-menu>
-    </div>    
-   
+  <el-col :span="12">
+      <div class="nav-right">
+          <el-dropdown popper-append-to-body="false">
+  <span class="el-dropdown-link">
+    <i class="el-icon-circle-plus-outline" :class={darkFont0:darkmode}></i>
+  </span>
+  <el-dropdown-menu slot="dropdown" :class="{dropDarkmode:darkmode}">
+    <el-dropdown-item class="drop" icon="el-icon-set-up" :class="{itemDarkmode:darkmode}">个人管理页面</el-dropdown-item>
+    <el-dropdown-item class="drop" icon="el-icon-s-order" :class="{itemDarkmode:darkmode}">查看文章</el-dropdown-item>
+    <el-dropdown-item @click.native="openSetting()"  class="drop" icon="el-icon-s-tools" :class="{itemDarkmode:darkmode}">设置</el-dropdown-item>
+    <el-dropdown-item class="drop" icon="el-icon-switch-button" :class="{itemDarkmode:darkmode}">退出登录</el-dropdown-item>
+  </el-dropdown-menu>
+</el-dropdown>
+      </div>
   </el-col>
-  <el-col :span="4"><div class="grid-content bg-purple"></div></el-col>
 </el-row>
   </div>
 </template>
 
 <script>
 export default {
+  props:{
+    darkmode:{
+      default:false,
+    }
+  },
     data(){
       return{
         activeIndex: '1',
@@ -33,61 +40,96 @@ export default {
       handleSelect:function () {
         
       },
-      
-
+      openSetting:function(){
+        this.$parent.closeSetting=false;
+      }
     }
 
 }
 </script>
 
 
-<style lang="less" >
+<style lang="less" scoped>
+.darkFont0{
+    color:#fff !important;
+}
+
+.darkBg{
+    background: #000 !important;
+    }
+
+
 #nav{
     width: 100%;
-    height: 80px;
+    height: 50px;
     background: #fff;
-    position: fix ;
+    position: fixed;
     top: 0;
-    // border-bottom: #99a9bf solid 1px;
-    .el-row {
-    margin-bottom: 0px;
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
-  .el-input{
-    margin-top: 20px;
-  }
-  .navList{
-              
-      .el-menu-item{
-        float: right;
-        padding:0 10px;
-        text-align: center;
+    overflow: hidden;
+    z-index: 10000;
+    box-shadow:#888 0px 0px 3px ;
+    .part{
+        float: left;
+        width: 80%;
+        height: 50px;
+        max-width: 300px;
+        color: #999;
+        .tit{
+            color: #1080cc;
+            font-size: 1.2em;
+            font-weight: 400;
+        }
         
-      }
-      .item{
-          font-size:1.3em;
-          width: 80px;
-          margin-left: 20px;
-          
-         
-      }
-  }
-  .el-col {
-    border-radius: 4px;
-  }
-  .el-col>div{
-    float: right;
-  }
 
- 
-  .grid-content {
-    border-radius: 4px;
-    height: 80px;
-  }
-  .row-bg {
-    padding: 0px 0;
-  }
+    }
+    .part>p{
+        display: inline-block;
+        line-height: 50px;
+        width: 100%;
+         text-align: right;
+
+
+    }
+    .nav-right{
+        float:right;
+        .el-icon-circle-plus-outline{
+            font-size: 30px;
+            line-height: 50px;
+        
+        }
+        .el-dropdown{
+             position: relative;
+            right: 50px;
+        }
+      
+       
+    }
+   .drop{
+            font-size: 20px;
+            line-height: 50px !important;
+            background: chartreuse;
+        }
+   
+
 }
+</style>
+<style  >
+.drop{
+      font-size: 1em;
+      line-height: 50px !important;
+      width: 150px;
+        }
+.dropDarkmode{
+  background: #000 !important;
+  border-color: #000 !important;
+ 
+}
+ .itemDarkmode{
+  color:#fff !important;
+  }
+  .itemDarkmode:hover{
+    background: #404040 !important;
+    color:#06f !important;
+
+  }
 </style>

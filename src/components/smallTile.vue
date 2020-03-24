@@ -36,7 +36,7 @@ export default {
 }}
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
     .smallTile{
         width: 150px;
         height: 150px;
