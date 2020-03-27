@@ -1,11 +1,13 @@
 
 <template>
-<div  class="contain" id=contain>
+<div class="body-copy">
+ <img src="../pic/timg.jpg"> 
+<div  class="contain" id=contain :class="{darkmode:darkmode,darkShadow:darkmode}">
 <div class="form-div" v-bind:class="{login_form:noDisplayed}">
-  <el-form ref="form" :model="form" class="main-form"  >
-        <h2 class="form-tit">登录</h2>
-        <el-form-item label="" class="form-item"  id="first-item">
-            <el-input v-model="form.username" placeholder="用户名" prefix-icon="el-icon-user" class="input-box"></el-input>
+  <el-form ref="form" :model="form" class="main-form" >
+        <h2 class="form-tit " :class="{darkFontG0:darkmode}"  >登录</h2>
+        <el-form-item label="" class="form-item"  id="first-item"  >
+            <el-input  v-model="form.username" placeholder="用户名" prefix-icon="el-icon-user" class="input-box" ></el-input>
         </el-form-item>
         <el-form-item label="" class="form-item">
             <el-input v-model="form.password" prefix-icon="el-icon-key" placeholder="请输入密码" show-password class="input-box"></el-input>
@@ -18,10 +20,10 @@
         </el-form-item>
         
         <el-breadcrumb separator="|" class="bottom-item">
-            <el-breadcrumb-item ><a href="#" v-on:click=switchForm>注册</a></el-breadcrumb-item>
-            <el-breadcrumb-item><a href="#">关于本站</a></el-breadcrumb-item>
-            <el-breadcrumb-item><a href="#">隐私</a></el-breadcrumb-item>
-            <el-breadcrumb-item><a href="#"></a></el-breadcrumb-item>
+            <el-breadcrumb-item ><a href="#" :class="{darkFontG0:darkmode}"  v-on:click=switchForm>注册</a></el-breadcrumb-item>
+            <el-breadcrumb-item><a href="#" :class="{darkFontG0:darkmode}"  >关于本站</a></el-breadcrumb-item>
+            <el-breadcrumb-item><a href="#" :class="{darkFontG0:darkmode}" >隐私</a></el-breadcrumb-item>
+            <el-breadcrumb-item><a href="#" :class="{darkFontG0:darkmode}" ></a></el-breadcrumb-item>
         </el-breadcrumb>
 
     </el-form>
@@ -62,6 +64,8 @@
   
   
 </div>
+</div>
+
     
 </template>
 <script>
@@ -73,12 +77,42 @@ import axios from '../../node_modules/axios'
 // import func from '../../vue-temp/vue-editor-bridge';
 
 export default {
-    name:"login",
+    created(){
+        this.getLocalStorage();
+        document.body.style.height=window.innerHeight+'px'
+        document.body.style.width=window.innerWidth+'px'
+
+       window.addEventListener("resize",function(){
+            document.body.style.height=window.innerHeight+'px'
+        document.body.style.width=window.innerWidth+'px'
+       })
+    },
     mounted(){
         start()
-
     },
     methods:{
+     getLocalStorage: function() {
+      var storage = window.localStorage;
+      if (storage.autoTheme == "false" && storage.followSystem == "false") {
+        if (storage.theme === "dark") {
+          this.darkmode = true;
+        } else {
+          this.darkmode = false;
+        }
+      } else if (storage.followSystem == "true" || this.followSystem) {
+        if (
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches
+        ) {
+          this.darkmode = true;
+        } else {
+          this.darkmode = false;
+        }
+      } else {
+      }
+      this.defaultContext = storage.defaultContext == "true" ? true : false;
+    },
+  
    switchForm:function(){
     this.displaySignUp=!this.displaySignUp;
     this.noDisplayed=!this.noDisplayed;
@@ -107,6 +141,7 @@ export default {
 
     data(){
         return  {
+            darkmode:false,
             form: {
                 username:"",
                 password:"",
@@ -128,9 +163,25 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.body-copy{
+  
+   
+    width: 100%;
+        height: 100%;
+     img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -100;
+        position: relative;
+        overflow: hidden;
+    }
+
 .contain{
+    background: rgba(255,255,255,0.5);
     width: 350px;
     height: 450px;
+    border-radius: 5px;
     margin-top: -200px;
     margin-left: -175px;
     position: absolute;
@@ -138,6 +189,8 @@ export default {
     top: 50%;
     box-shadow: 0px 0px 8px   #808080; 
     overflow: hidden;
+    z-index: -10;
+ 
     #first-item{
         margin-top: 80px;
     }
@@ -212,5 +265,14 @@ export default {
    left: 50%;
    margin-left: -40px;
 
+}
+}
+.darkmode{
+    background: rgba(0,0,0,0.5) !important;
+}
+</style>
+<style >
+   canvas{
+    z-index: -9 !important;
 }
 </style>

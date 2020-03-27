@@ -3,7 +3,7 @@
     <nav-bar :darkmode="darkmode"></nav-bar>
     <div class="contain">
       <div class="cover-pic">
-        <img src="../pic/timg.jpg" />
+        <img :src="'/api/coverPhoto?id='+article.id"/>
       </div>
       <div class="title-div" :class="{darkFont0:darkmode}">
         <div class="title">
@@ -22,11 +22,14 @@
           </p>
         </div>
       </div>
-      <div class="context-div" v-html="article.context"></div>
+      <article-context-vue :darkmode="darkmode" 
+      :forceDark="defaultContext"
+      :data="article.context"
+      ></article-context-vue>
       <div class="context-foot">
         <div class="tag-div">
           <div :class="{darkFont1:darkmode}">
-            <p v-cloak>最后更新于：&nbsp;{{article.updateTime}}</p>
+            <p v-cloak>最后更新于：&nbsp;{{article.last_change_date}}</p>
           </div>
           <tag-vue v-for="(item,index) in article.theme" :key="index" :context="item"></tag-vue>
         </div>
@@ -65,6 +68,7 @@ import recommendCardVue from "../components/recommendCard.vue";
 import gotoTopVue from "../components/gotoTop.vue";
 import settingVue from "../components/setting.vue";
 import tagVue from "../components/tag.vue";
+import articleContextVue from '../components/articleContext.vue';
 
 export default {
   created() {
@@ -91,6 +95,7 @@ export default {
       defaultContext: false,
       followSystem: true,
       article: {
+        id:0,
         title: "这是文章标题",
         context: "<p>默认文章内容</p>",
         time: "1970-1-1",
@@ -110,6 +115,7 @@ export default {
       var context = document
         .getElementsByClassName("context-div")[0]
         .getElementsByTagName("p");
+
       for (var i = 0; i < context.length; i++) {
         context[i].className = "context-font-color";
       }
@@ -139,8 +145,6 @@ export default {
       return promise;
     },
     processData: function(data) {
-      // data=data.split('\n').join("<br>")
-      // data=data.split('\r').join("<br>")
       this.article = JSON.parse(data);
       this.article.theme = this.article.theme.split(" ");
       for (var i = 0; i < this.article.theme.length; i++) {
@@ -178,25 +182,27 @@ export default {
     recommendCardVue,
     gotoTopVue,
     settingVue,
-    tagVue
+    tagVue,
+articleContextVue,
+
   },
   watch: {
     darkmode: function(val) {
-      if (!val || !this.defaultContext) {
-        this.removeClass();
-      } else {
-        this.changeColor();
-      }
+      // if (!val || !this.defaultContext) {
+      //   this.removeClass();
+      // } else {
+      //   this.changeColor();
+      // }
       if (val) {
         document.body.style.background = "#242424";
       }
     },
     defaultContext: function(val) {
-      if (!val || !this.defaultContext) {
-        this.removeClass();
-      } else {
-        this.changeColor();
-      }
+      // if (!val || !this.defaultContext) {
+      //   this.removeClass();
+      // } else {
+      //   this.changeColor();
+      // }
     }
   }
 };
@@ -218,7 +224,7 @@ export default {
 
 .main-div {
   width: 100%;
-
+  overflow: hidden;
   .contain {
     max-width: 1024px;
     margin: 0 auto;
@@ -281,8 +287,6 @@ export default {
           color: #666;
         }
       }
-    }
-    .context-div {
     }
     .context-foot {
       min-height: 200px;
@@ -376,8 +380,4 @@ export default {
   }
 }
 </style>
-<style>
-.context-font-color {
-  color: #eee !important;
-}
-</style>
+

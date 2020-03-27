@@ -2,14 +2,14 @@
   <div class="main" :class="{darkFontG0:darkmode,garkBgG0:darkmode}">
     <nav-bar-vue :darkmode="darkmode" ></nav-bar-vue>
     <div class="body-div">
-      <div class="left-part">
-        <div class="top-div">
+      <div class="left-part" >
+        <div class="top-div" :class="{darkFontG0:darkmode,darkBgG0:darkmode,darkShadow:darkmode}">
+        
         </div>
-        <div class="article-list">
+        <div class="article-list" :class="{darkShadow:darkmode}">
           <div class="head" :class="{darkFontG0:darkmode,darkBgG0:darkmode}">
           <div>
              <router-link to='home' :class="{darkFontG0:darkmode,linkActive:active}">最新</router-link>
-
             </div>
             <div>
               <router-link to="hot" :class="{darkFontG0:darkmode,linkActive:!active}" >热门</router-link>
@@ -20,7 +20,11 @@
           </div>
         </div>
       </div>
-      <div class="right-part"></div>
+      <div class="right-part">
+        <panel-card-vue :darkmode="darkmode"></panel-card-vue>
+        <info-card-vue :darkmode="darkmode"  class="info-card"></info-card-vue>
+        <tool-panel-vue :darkmode="darkmode"></tool-panel-vue>
+      </div>
     </div>
     <goto-top-vue :darkmode="darkmode" ></goto-top-vue>
     <setting-vue :darkmode="darkmode" v-model="closeSetting"></setting-vue>
@@ -32,6 +36,9 @@ import navBarVue from "../components/navBar.vue";
 import gotoTopVue from '../components/gotoTop.vue';
 import settingVue from '../components/setting.vue';
 import articleCardVue from '../components/articleCard.vue';
+import panelCardVue from '../components/panelCard.vue';
+import infoCardVue from '../components/infoCard.vue';
+import toolPanelVue from '../components/toolPanel.vue';
 export default {
   created(){
     if(this.darkmode){
@@ -50,6 +57,10 @@ export default {
     gotoTopVue,
     settingVue,
     articleCardVue,
+    panelCardVue,
+    infoCardVue,
+    toolPanelVue,
+
   },
   data() {
     return {
@@ -113,7 +124,7 @@ export default {
   .body-div{
     max-width: 1025px;
     margin: 50px auto;
-    padding: 25px;
+    padding: 10px;
     .body-div::after{
       content: "";
       display: block;
@@ -127,10 +138,13 @@ export default {
       .top-div{
         width: 100%;
         height: 120px;
-        
+        background: #fff;
+        box-shadow: #ddd 0px 0px 10px 1px ;        
       }
       .article-list{
         width: 100%;
+      margin-top:10px;
+        box-shadow: #ddd 0px 0px 10px 1px ;        
         .head{
           width: 100%;
           height: 60px;
@@ -159,6 +173,11 @@ export default {
     }
     .right-part{
       width: 300px;
+      padding-left: 10px;
+      .info-card{
+        margin-top: 10px;
+      }
+
     }
   }
 }

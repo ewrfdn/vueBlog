@@ -8,7 +8,9 @@
 <script>
 export default {
     name: 'app',
-    components: {}
+    components: {
+        
+    }
 
 }
 </script>
@@ -33,12 +35,11 @@ export default {
 .darkBgG2 {
   background: #303030 !important;
 }
+.darkShadow{
+  box-shadow: #111 0px 0px 10px 1px !important;        
+}
 
 
 
-//   .drop{
-//             font-size: 1em;
-//             line-height: 50px !important;
-//             width: 150px;
-//         }
+
 </style>>

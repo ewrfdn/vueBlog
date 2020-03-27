@@ -55,12 +55,10 @@ function start() {
             this.maincanvas.width = this.width
             this.maincanvas.height = this.height
             this.linkDistance = this.width > this.height ? this.width * this.width / 64 : this.height * this.height / 64
-            this.maincanvas.style.background = "#fff"
             this.maincanvas.style.padding = 0;
             this.maincanvas.style.margin = 0;
             this.maincanvas.style.position = 'absolute'
             this.maincanvas.style.top = 0;
-            this.maincanvas.style.zIndex = -1
             var color = "rgb(147, 203, 248)";
             this.ctx = this.maincanvas.getContext('2d')
             this.ctx.fillStyle = color;
@@ -106,7 +104,8 @@ function start() {
             }
         };
         this.loop = function() {
-            background.draw()
+            // background.draw()
+            a.ctx.clearRect(0, 0, a.width, a.height)
             this.time = new Date().getTime()
             var dt = this.time - this.lastTime / 1000;
             if (dt > this.maxtime) {

@@ -13,7 +13,7 @@ export default {
    mounted() {
     var t=window.innerHeight
     window.addEventListener("scroll", ()=>{
-        if(document.documentElement.scrollTop>t){
+        if(document.documentElement.scrollTop>t/2){
             this.isDisplay=true;
 
         }else{
@@ -106,7 +106,6 @@ box-shadow: #111 0px 0px 3px 1px !important;
   height: 42px;
   bottom: 49px;
   right: 49px;
-
 }
 .displayButton{
     display: block !important;
