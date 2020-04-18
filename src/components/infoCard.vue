@@ -20,7 +20,7 @@
     </div>
     <div class="row3">
     <hr>
-    <p v-cloak>博客已经运行{{day}}天 <i class="el-icon-s-marketing"></i></p>
+    <p v-cloak>博客已经运行{{runTime}}天 <i class="el-icon-s-marketing"></i></p>
     </div>
   </div>
 </template>
@@ -30,13 +30,21 @@ export default {
     props:{
         darkmode:{
             default:false,
+        },
+        viewNumber:{
+            default:0,
+        },
+        articleNumber:{
+            default:0,
+        },
+        runTime:{
+            default:0,
         }
     },
     data(){
         return{
-            day:0,
-            viewNumber:0,
-            articleNumber:0,
+          
+            
         }
     }
 

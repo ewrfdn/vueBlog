@@ -41,7 +41,7 @@
             <div class="grid" :class="{darkFontG1:darkmode}">
             <p><span><i class="el-icon-setting"></i></span>
             <br>
-            <span>设置</span>
+            <span>后台管理</span>
             </p>
         </div>
         </router-link> <router-link to="/editor">

@@ -25,6 +25,8 @@
 
 <script>
 export default {
+  created(){
+  },
   props:{
     darkmode:{
       default:false,
@@ -33,6 +35,7 @@ export default {
     data(){
       return{
         activeIndex: '1',
+        
       }
       
     },

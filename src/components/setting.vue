@@ -1,122 +1,143 @@
 <template>
-  <div class="setting" :class="{darkFont0:darkmode,darkBg:darkmode,closed:closeSetting}">
-    <div class="close" @click="close()" :class="{darkFont0:darkmode}">
-      <i class="el-icon-close"></i></div>
-    <div class="setting-tit">
-      <h3>setting</h3>
-    </div>
-    <div class="left-part">
-      <ul class="option">
-        <li>主题</li>
-        <li>
-          <el-switch
-            style="display: block"
-            v-model="darkTheme"
-            active-color="#13ce66"
-            active-text="dark "
-            inactive-text="light"
-            :disabled="followSystem||autoTheme"
-          ></el-switch>
-        </li>
-
-        <li>强制正文白色</li>
-        <li>
-          <el-tooltip class="item" effect="dark" content="黑暗模式下文章正文强制转换为白色" placement="top-start">
-            <el-switch
-              style="display: block"
-              v-model="defaultContext"
-              active-color="#13ce66"
-              active-text="on "
-              :disabled="!darkmode"
-              inactive-text="off"
-            ></el-switch>
-          </el-tooltip>
-        </li>
-        <li>跟随系统主题</li>
-        <li>
-           <el-tooltip class="item" effect="dark"  placement="top-start">
-               <div slot="content">仅支持window10和macOS10.14.4 <br>平台部分浏览器</div>
-            <el-switch
-              style="display: block"
-              v-model="followSystem"
-              active-color="#13ce66"
-              active-text="on "
-              inactive-text="off"
-            ></el-switch>
-          </el-tooltip>
-        </li>
-        <li>按照时间自动切换主题</li>
-        <li>
-          <el-switch
-            style="display: block"
-            v-model="autoTheme"
-            active-color="#13ce66"
-            active-text="on "
-            inactive-text="off"
-            :disabled="followSystem"
-          ></el-switch>
-        </li>
-      </ul>
-    </div>
-<div class="right-part">
-      <ul class="option">
-        <li>*主页</li>
-        <li>
-            <el-tooltip class="item" effect="dark" placement="top-start">
-            <div slot="content">开始菜单模式推荐chrome 80以上内核,<br/>其他浏览器可能会有显示或性能问题</div>
-            <el-switch
-              style="display: block"
-              v-model="startMenu"
-              active-color="#13ce66"
-              active-text="传统 "
-              inactive-text="开始菜单模式"
-            ></el-switch>
-          </el-tooltip>
-        </li>
-        <li>*禁用部分动画效果</li>
-        <li>
-          <el-switch
-            style="display: block"
-            v-model="reduceEffect"
-            active-color="#13ce66"
-            active-text="on "
-            inactive-text="off"
-          ></el-switch>
-        </li>
-        <li>*使用pwa模式</li>
-        <li>
-            <el-tooltip class="item" effect="dark" placement="top-start">
-            <div slot="content">pwa模式下网站内容会默认存储在本地，<br/>可离线访问，大大加快下次访问速度</div>
+  <div id="out-div" ref="out" :class="{closed:closeSetting}">
+    <div class="setting" :class="{darkFont0:darkmode,darkBg:darkmode,closed:closeSetting}">
+      <div class="close" @click="close()" :class="{darkFont0:darkmode}">
+        <i class="el-icon-close"></i>
+      </div>
+      <div class="setting-tit">
+        <h3>setting</h3>
+      </div>
+      <div class="left-part">
+        <ul class="option">
+          <li>主题</li>
+          <li>
             <el-switch
               style="display: block"
               v-model="darkTheme"
               active-color="#13ce66"
-              active-text="off "
-              inactive-text="on"
+              active-text="dark "
+              inactive-text="light"
+              :disabled="followSystem||autoTheme"
             ></el-switch>
-          </el-tooltip>
-        </li>
-      </ul>
-    </div>
-    <div class="setting-foot">
-      <p>*项目需要下次启动时才能生效</p>
+          </li>
+
+          <li>强制正文白色</li>
+          <li>
+            <el-tooltip class="item" effect="dark" content="黑暗模式下文章正文强制转换为白色" placement="top-start">
+              <el-switch
+                style="display: block"
+                v-model="defaultContext"
+                active-color="#13ce66"
+                active-text="on "
+                :disabled="!darkmode"
+                inactive-text="off"
+              ></el-switch>
+            </el-tooltip>
+          </li>
+          <li>跟随系统主题</li>
+          <li>
+            <el-tooltip class="item" effect="dark" placement="top-start">
+              <div slot="content">
+                仅支持window10和macOS10.14.4
+                <br />平台部分浏览器
+              </div>
+              <el-switch
+                style="display: block"
+                v-model="followSystem"
+                active-color="#13ce66"
+                active-text="on "
+                inactive-text="off"
+              ></el-switch>
+            </el-tooltip>
+          </li>
+          <li>按照时间自动切换主题</li>
+          <li>
+            <el-switch
+              style="display: block"
+              v-model="autoTheme"
+              active-color="#13ce66"
+              active-text="on "
+              inactive-text="off"
+              :disabled="followSystem"
+            ></el-switch>
+          </li>
+        </ul>
+      </div>
+      <div class="right-part">
+        <ul class="option">
+          <li>*主页</li>
+          <li>
+            <el-tooltip class="item" effect="dark" placement="top-start">
+              <div slot="content">
+                开始菜单模式推荐chrome 80以上内核,
+                <br />其他浏览器可能会有显示或性能问题
+              </div>
+              <el-switch
+                style="display: block"
+                v-model="startMenu"
+                active-color="#13ce66"
+                active-text="传统 "
+                inactive-text="开始菜单模式"
+              ></el-switch>
+            </el-tooltip>
+          </li>
+          <li>*禁用部分动画效果</li>
+          <li>
+            <el-switch
+              style="display: block"
+              v-model="reduceEffect"
+              active-color="#13ce66"
+              active-text="on "
+              inactive-text="off"
+            ></el-switch>
+          </li>
+          <li>*使用pwa模式</li>
+          <li>
+            <el-tooltip class="item" effect="dark" placement="top-start">
+              <div slot="content">
+                pwa模式下网站内容会默认存储在本地，
+                <br />可离线访问，大大加快下次访问速度
+              </div>
+              <el-switch
+                style="display: block"
+                v-model="darkTheme"
+                active-color="#13ce66"
+                active-text="off "
+                inactive-text="on"
+              ></el-switch>
+            </el-tooltip>
+          </li>
+        </ul>
+      </div>
+      <div class="setting-foot">
+        <p>*项目需要下次启动时才能生效</p>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-    created(){
-        var storage = window.localStorage;
-        this.followSystem=storage.followSystem=="false"?false:true;
-        this.startMenu=storage.startMenu=="true"?true:false;;
-        this.defaultContext=storage.defaultContext=="true"?true:false;;
-        this.reduceEffect=storage.reduceEffect=="true"?true:false;;
-        this.autoTheme=storage.autoTheme=="true"?true:false;
-    },
+  created() {
+    
+    var storage = window.localStorage;
+    this.followSystem = storage.followSystem == "false" ? false : true;
+    this.startMenu = storage.startMenu == "true" ? true : false;
+    this.defaultContext = storage.defaultContext == "true" ? true : false;
+    this.reduceEffect = storage.reduceEffect == "true" ? true : false;
+    this.autoTheme = storage.autoTheme == "true" ? true : false;
+  },
+  mounted(){
+    var out=document.getElementById('out-div')
+    out.style.width = window.innerWidth+'px';
+    out.style.height = window.innerHeight+'px';
+    window.addEventListener('onsize',function(out){
+    out.style.width = window.innerWidth+'px';
+    out.style.height = window.innerHeight+'px';
+    })
+  },
   props: {
-    darkmode: {
-    },
+    darkmode: {},
     value: {
       default: true
     }
@@ -129,14 +150,14 @@ export default {
   },
   data() {
     return {
-    closeSetting: this.value,
-    darkTheme: this.darkmode,
-    defaultContext:true,
-    followSystem:true,
-    reduceEffect:false,
-    startMenu:false,
-    autoTheme:false,
-    hiddenDefaultContext:false,
+      closeSetting: this.value,
+      darkTheme: this.darkmode,
+      defaultContext: true,
+      followSystem: true,
+      reduceEffect: false,
+      startMenu: false,
+      autoTheme: false,
+      hiddenDefaultContext: false
     };
   },
   watch: {
@@ -145,58 +166,59 @@ export default {
       this.$parent.darkmode = val;
       if (val) {
         storage.theme = "dark";
-        this.defaultContext=true;
+        this.defaultContext = true;
       } else {
         storage.theme = "light";
-        this.defaultContext=false;
+        this.defaultContext = false;
       }
     },
     value: function(val) {
       this.closeSetting = val;
     },
-    autoTheme:function(val){
+    autoTheme: function(val) {
       var storage = window.localStorage;
-        storage.autoTheme=val;
-        if(val){
-            var h=new Date().getHours();
-            if(h>20||h<8){
-                this.darkTheme=true;
-                this.$parent.darkmode=true
-            }else{
-                this.darkTheme=false;
-                this.$parent.darkmode=false
-            }
+      storage.autoTheme = val;
+      if (val) {
+        var h = new Date().getHours();
+        if (h > 20 || h < 8) {
+          this.darkTheme = true;
+          this.$parent.darkmode = true;
+        } else {
+          this.darkTheme = false;
+          this.$parent.darkmode = false;
         }
+      }
     },
-    followSystem:function(val){
-        var storage = window.localStorage;
-        this.$parent.followSystem = val;
-        if(val){
-        storage.followSystem=true;
-           if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                this.$parent.darkmode = val;
-                this.darkTheme=true;
-                }else{
-            this.darkTheme=false;
-        }
-        }else{
-           storage.followSystem=false;
-        }
-            
-        
-    },
-    startMenu:function(val){
+    followSystem: function(val) {
       var storage = window.localStorage;
-        storage.startMenu=val;
+      this.$parent.followSystem = val;
+      if (val) {
+        storage.followSystem = true;
+        if (
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches
+        ) {
+          this.$parent.darkmode = val;
+          this.darkTheme = true;
+        } else {
+          this.darkTheme = false;
+        }
+      } else {
+        storage.followSystem = false;
+      }
     },
-    reduceEffect:function(val){
-        var storage = window.localStorage;
-        storage.reduceEffect=val
+    startMenu: function(val) {
+      var storage = window.localStorage;
+      storage.startMenu = val;
     },
-    defaultContext:function(val){
-        var storage = window.localStorage;
-        storage.defaultContext=val
-        this.$parent.defaultContext=val;
+    reduceEffect: function(val) {
+      var storage = window.localStorage;
+      storage.reduceEffect = val;
+    },
+    defaultContext: function(val) {
+      var storage = window.localStorage;
+      storage.defaultContext = val;
+      this.$parent.defaultContext = val;
     }
   }
 };
@@ -206,7 +228,12 @@ export default {
 .darkFont0 {
   color: #ccc !important;
 }
-
+#out-div {
+  background: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+}
 .darkBg {
   background: #404040 !important;
   box-shadow: #111 0px 0px 5px 1px !important;
@@ -246,13 +273,13 @@ export default {
       line-height: 50px;
     }
   }
-   .setting-foot {
+  .setting-foot {
     height: 10%;
     width: 100%;
     position: absolute;
     bottom: 0;
     text-align: center;
-    p{
+    p {
       font-size: 0.8em;
     }
   }
@@ -271,7 +298,6 @@ export default {
       }
     }
   }
-  
 }
 .closed {
   display: none;

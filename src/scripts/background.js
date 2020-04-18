@@ -46,7 +46,7 @@ function start() {
         this.maxtime = 1 / 30;
         gameObject = []
         this.initialize = function(divName) {
-            var mainDiv = document.getElementById("contain")
+            var mainDiv = document.getElementById(divName)
             console.log(mainDiv)
             this.maincanvas = document.createElement("canvas")
             mainDiv.appendChild(this.maincanvas)
@@ -218,7 +218,7 @@ function start() {
         mouse.y = e.clientY;
     }
     var a = new canvasBody();
-    a.initialize("contain");
+    a.initialize("form-div");
 }
 export {
     start

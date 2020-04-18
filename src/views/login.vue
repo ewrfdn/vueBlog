@@ -3,7 +3,7 @@
 <div class="body-copy">
  <img src="../pic/timg.jpg"> 
 <div  class="contain" id=contain :class="{darkmode:darkmode,darkShadow:darkmode}">
-<div class="form-div" v-bind:class="{login_form:noDisplayed}">
+<div class="form-div" id='form-div' v-bind:class="{login_form:noDisplayed}">
   <el-form ref="form" :model="form" class="main-form" >
         <h2 class="form-tit " :class="{darkFontG0:darkmode}"  >登录</h2>
         <el-form-item label="" class="form-item"  id="first-item"  >
@@ -61,19 +61,23 @@
     </el-form>
 
 </div>
-  
-  
+  <div class="foot">
+      <p>© 2020&nbsp; 张晖&nbsp; 苏&nbsp;ICP&nbsp;备&nbsp;110745号</p>
+      <p>社交网站 &nbsp; <a href="https://github.com/ewrfdn/">github</a> &nbsp;<a href="https://www.zhihu.com/people/zhang-hui-57-4-69">知乎</a>  <a href="">新浪微博</a></p>
+  </div>
 </div>
+
 </div>
 
     
 </template>
 <script>
+import {setCookie,addStore} from "../scripts/storage"
 import {start} from'../scripts/background.js'
 import { readSync } from 'fs';
 import $ from"../../node_modules/jquery"
-import axios from '../../node_modules/axios'
-
+// import axios from '../../node_modules/axios'
+import {login} from "../api/api"
 // import func from '../../vue-temp/vue-editor-bridge';
 
 export default {
@@ -83,12 +87,17 @@ export default {
         document.body.style.width=window.innerWidth+'px'
 
        window.addEventListener("resize",function(){
-            document.body.style.height=window.innerHeight+'px'
+        document.body.style.height=window.innerHeight+'px'
         document.body.style.width=window.innerWidth+'px'
        })
     },
     mounted(){
         start()
+        document.body.style.overflow="hidden"
+    },
+    beforeDestroy(){
+        document.body.style.overflow="visible"
+
     },
     methods:{
      getLocalStorage: function() {
@@ -119,13 +128,42 @@ export default {
 //    }
     },
     submit_login:function(){
-        axios.post("http://localhost:64688/api/login",{
-            'username':this.form.username,
-            'password':this.form.password,
-            'proveCode':this.form.proveCode
-        }).catch((response)=>{
-            console.log(response)
-        })
+    //    axios({
+    //       method: 'post',
+    //       url: '/api/passport',
+    //       data:this.form,
+    //       }).then( (response)=> {
+    //         if(response.status==200){
+    //           var storage=window.localStorage;
+    //           console.log(response.data)
+    //           var token=eval(response.data)
+    //           if(token.status=='successful'){
+    //             storage.token=token.token
+    //             window.setTimeout(()=>{
+    //             this.$router.push('/editor')
+    //             },500)
+    //           }
+    //         }
+    //      })
+         login(this.form).then( (res)=> {
+              var storage=window.localStorage;
+                 res=eval(res)
+              if(res.status==200){ //post 请求状态码 需要和后端约定 200 成功，401 密码错误，406 token 过期
+                 let userInfo={
+                  uid:res.uid,
+                  token:res.token,
+              }
+              alert('登录成功');
+              setCookie('islogin','true')
+              addStore('uid',res.uid)
+              addStore("token",res.token)
+               this.$router.push('/editor')
+              }
+              else{
+              alert('用户名或密码错误');
+              }
+            
+         })
         
     },
     submit_signUp:function(){
@@ -164,8 +202,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .body-copy{
-  
-   
+//   overflow: hidden;
     width: 100%;
         height: 100%;
      img{
@@ -174,23 +211,38 @@ export default {
         object-fit: cover;
         z-index: -100;
         position: relative;
-        overflow: hidden;
+        overflow-x: hidden;
     }
 
 .contain{
-    background: rgba(255,255,255,0.5);
-    width: 350px;
-    height: 450px;
     border-radius: 5px;
-    margin-top: -200px;
-    margin-left: -175px;
+    // margin-top: -200px;
+    // margin-left: -175px;
     position: absolute;
     left: 50%;
     top: 50%;
-    box-shadow: 0px 0px 8px   #808080; 
+    transform: translate(-50%,-50%);
     overflow: hidden;
-    z-index: -10;
- 
+    // z-index: -10;
+    .foot{
+        text-align: center;
+        min-height: 80px;
+        margin-top: 20px;
+        p{
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.8em;
+            a{
+                text-decoration: none;
+                color: #fff;
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+            a:hover{
+                color: #00f;
+            }
+        }
+    }
     #first-item{
         margin-top: 80px;
     }
@@ -229,6 +281,14 @@ export default {
         width: 350px;
         height: 450px;
        transition: 0.2s ease-in-out;
+       z-index: 100;
+        width: 350px;
+    box-shadow: 0px 0px 8px   #808080; 
+        height: 450px;
+    background: rgba(255,255,255,0.5);
+    overflow: hidden;
+    position: relative;
+
      
     }
     .bottom-item{

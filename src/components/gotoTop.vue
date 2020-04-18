@@ -101,6 +101,12 @@ box-shadow: #111 0px 0px 3px 1px !important;
   display: none;
   box-shadow: #ddd 0px 0px 5px 1px;
 }
+@media screen and (max-width: 550px) {
+.goto-top{
+  bottom: 20px;
+  right: 20px;
+}
+}
 .goto-top:hover {
   width: 42px;
   height: 42px;

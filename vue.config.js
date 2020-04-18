@@ -1,10 +1,20 @@
 // const path = require('path');
 module.exports = {
+
     /** 区分打包环境与开发环境
      * process.env.NODE_ENV==='production'  (打包环境)
      * process.env.NODE_ENV==='development' (开发环境)
      * baseUrl: process.env.NODE_ENV==='production'?"https://xxx":'',
      */
+
+    // lintOnSave: true,
+    // chainWebpack: (config) => {
+    //     config.resolve.alias
+    //         .set('@', resolve('src'))
+    //         .set('@assets', resolve('src/assets'))
+    //         // 这里只写了两个个，你可以自己再加，按这种格式.set('', resolve(''))
+    // },
+
     // 项目部署的基础路径
     // 我们默认假设你的应用将会部署在域名的根部,
     // 例如 https://www.my-app.com/
@@ -37,6 +47,7 @@ module.exports = {
 
     // 是否在构建生产包时生成 sourceMap 文件，false将提高构建速度  映射文件 打包时使用
     productionSourceMap: false,
+
 
     // 调整内部的webpack配置. 
     // see https://github.com/vuejs/vue-cli/blob/dev/docs/webpack.md

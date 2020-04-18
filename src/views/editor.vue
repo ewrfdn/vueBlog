@@ -1,6 +1,6 @@
 <template>
 <div>
-<navBar></navBar>
+<navBar  title="写文章"></navBar>
   <div class="mainPage" >
     <div class="face-photo">
       <uploadPhoto explan="请上传封面" class="uploadPhoto"  :action="photoAction" num='' ref="pic" ></uploadPhoto>
@@ -33,6 +33,29 @@ import uploadPhoto from "../components/upLoadSinglePic";
 import navBar from "../components/navBar1"
 import axios from '../../node_modules/axios'
 export default {
+  created(){
+    this.getLocalStorage()
+    if(this.id!=-1){
+      this.getDate();
+    };
+      console.log(this.submitForm.token)
+      //  axios({
+      //     method: 'post',
+      //     url: '/api/proveUser',
+      //     data:{token:this.submitForm.token},
+      //     }).then( (response)=> {
+      //         if(response.data=='failed'){
+      //           this.$router.push('/login')
+      //         }else{
+      //           var storage=window.localStorage;
+      //           console.log(response)
+      //           this.login=true;
+      //           storage.token=response.data;
+      //           this.submitForm.token=response.data;
+      //         }
+      //    })
+    
+  },
   mounted() {
     this.editor = new E("#toolBar", "#context");
     this.editor.customConfig.colors = [
@@ -52,20 +75,40 @@ export default {
     this.editor.create();
 
   },
+   props: {
+    a_id: {
+      default: -1
+    }
+  },
   data() {
     return {
       moibleView: false,
       editor:null,
       photoAction:"/api/coverPhoto",
+      login:false,
+      id:this.a_id,
       submitForm:{
         title:"",
         preview:"",
         context:"",
         theme:"",
+        token:"",
       },
     };
   },
   methods: {
+    getDate:function(){
+      axios({
+        method:"get",
+        url:'/api/article?id='+this.id
+      }).then((res)=>{
+        var data=res.data
+        this.submitForm.title=data.title;
+        this.submitForm.theme=data.theme;
+        this.submitForm.context=data.context;
+        this.editor.txt.html(data.context);
+      })
+    },
     changeSize: function() {
       if (document.body.clientWidth < 600) {
         this.editor.customConfig.menus = [
@@ -84,19 +127,54 @@ export default {
         // this.editor.create()
       }
     },
+    getLocalStorage: function() {
+      var storage = window.localStorage;
+      this.submitForm.token=storage.token||"000"
+      if (storage.autoTheme == "false" && storage.followSystem == "false") {
+        if (storage.theme === "dark") {
+          this.darkmode = true;
+        } else {
+          this.darkmode = false;
+        }
+      } else if (storage.followSystem == "true" || this.followSystem=="true") {
+        if (
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches
+        ) {
+          this.darkmode = true;
+        } else {
+          this.darkmode = false;
+        }
+      } else {
+      }
+    },
     submitHandle:function(){
       this.getPreview()
       this.checkContext()
-      axios({
+      var action=''
+      if(this.id==-1){
+          action='/api/article'
+      }else{
+          action='/api/article?id='+this.id
+      }
+        axios({
           method: 'post',
-          url: '/api/article',
+          url: action,
           data:this.submitForm,
           }).then( (response)=> {
+          if(response.data=='-2'){
+            alert('登录已过期请重新登录')
+            this.$router.push('login')
+            return 0;
+          }
           this.photoAction="/api/coverPhoto"+"?id="+response.data
+          this.id=response.data
             setTimeout(() => {
             this.$refs.pic.submitUpload();
             }, 100);
+         }).then((response)=>{
          })
+  
     },
     onEdiorFocus:function(){
 

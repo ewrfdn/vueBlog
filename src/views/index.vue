@@ -1,18 +1,18 @@
 <template>
   <div class="main" :class="{darkFontG0:darkmode,garkBgG0:darkmode}">
-    <nav-bar-vue :darkmode="darkmode" ></nav-bar-vue>
+    <nav-bar-vue :darkmode="darkmode" :clickButton="open" ></nav-bar-vue>
     <div class="body-div">
       <div class="left-part" >
         <div class="top-div" :class="{darkFontG0:darkmode,darkBgG0:darkmode,darkShadow:darkmode}">
-        
+          <img src="../pic/timg.jpg">
         </div>
         <div class="article-list" :class="{darkShadow:darkmode}">
           <div class="head" :class="{darkFontG0:darkmode,darkBgG0:darkmode}">
           <div>
-             <router-link to='home' :class="{darkFontG0:darkmode,linkActive:active}">最新</router-link>
+             <router-link  :to='{name:"home",params:{url:"/api/article?t=list&sort=desc"}}' :class="{darkFontG0:darkmode,linkActive:active==1}">最新</router-link>
             </div>
             <div>
-              <router-link to="hot" :class="{darkFontG0:darkmode,linkActive:!active}" >热门</router-link>
+              <router-link   :to='{name:"hot",params:{url:"/api/article?t=list&sort=pop"}}' :class="{darkFontG0:darkmode,linkActive:active==2}" >热门</router-link>
               </div>
           </div>
           <div class="list">
@@ -21,9 +21,13 @@
         </div>
       </div>
       <div class="right-part">
-        <panel-card-vue :darkmode="darkmode"></panel-card-vue>
-        <info-card-vue :darkmode="darkmode"  class="info-card"></info-card-vue>
-        <tool-panel-vue :darkmode="darkmode"></tool-panel-vue>
+         <panel-card-vue :darkmode="darkmode" class="frist"></panel-card-vue>
+    <info-card-vue :darkmode="darkmode" class="info-card"
+    :articleNumber="theme.length"
+    :viewNumber="views"
+    :runTime="runTime"
+    ></info-card-vue>
+    <tool-panel-vue :darkmode="darkmode"></tool-panel-vue>
       </div>
     </div>
     <goto-top-vue :darkmode="darkmode" ></goto-top-vue>
@@ -32,15 +36,19 @@
 </template>
 
 <script>
-import navBarVue from "../components/navBar.vue";
+import{ getStatistic  } from '../api/api'
+import navBarVue from "../components/navBar1.vue";
 import gotoTopVue from '../components/gotoTop.vue';
 import settingVue from '../components/setting.vue';
 import articleCardVue from '../components/articleCard.vue';
+import toolListVue from '../components/toolList.vue';
+import axios from '../../node_modules/axios';
+import infoCardVue from "../components/infoCard.vue";
 import panelCardVue from '../components/panelCard.vue';
-import infoCardVue from '../components/infoCard.vue';
 import toolPanelVue from '../components/toolPanel.vue';
 export default {
   created(){
+    this.getdate();
     if(this.darkmode){
         document.body.style.background="#242424"
       }else{
@@ -56,7 +64,7 @@ export default {
     navBarVue,
     gotoTopVue,
     settingVue,
-    articleCardVue,
+    toolListVue,
     panelCardVue,
     infoCardVue,
     toolPanelVue,
@@ -64,12 +72,18 @@ export default {
   },
   data() {
     return {
+      theme:[],
       darkmode: false,
+      views:0,
       active:true,
       darkmode: false,
       closeSetting: true,
       defaultContext:false,
       followSystem:true,
+      panelCardVue,
+    infoCardVue,
+    toolPanelVue,
+    runTime:45
     };
   },
   methods: {
@@ -94,6 +108,20 @@ export default {
       }
       this.defaultContext = storage.defaultContext == "true" ? true : false;
     },
+    open:function(){
+    },
+    getdate:function(){
+      getStatistic({t:"theme"}).then((res)=>{
+        this.theme=eval(res)
+      }),
+      getStatistic({t:"views"}).then((res)=>{
+        var l=eval(res)
+        for(var i=0;i<l.length;i++){
+          this.views+=l[i][1]
+        }
+        // alert(this.views)
+      })
+    }
    
 
   },
@@ -107,8 +135,10 @@ export default {
       }
     },
     $route(to,from){
-      if(to.path=="/hot");{
-        this.active=!this.active
+      if(to.path=="/home"){
+        this.active=1
+      }if(to.path=="/hot"){
+        this.active=2
       }
     }
   }
@@ -117,19 +147,24 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
-.main{
-  width: 100%;
-  height:100%;
-  .body-div{
-    max-width: 1025px;
-    margin: 50px auto;
-    padding: 10px;
-    .body-div::after{
+ .main::after{
       content: "";
       display: block;
       clear: both;
     }
+.main{
+  width: 100%;
+  height:100%;
+  .body-div::after{
+      content: "";
+      display: block;
+      clear: both;
+    }
+  .body-div{
+    width: 1025px;
+    margin: 50px auto;
+    padding: 10px;
+   
     .left-part,.right-part{
       float: left;
     }
@@ -139,7 +174,12 @@ export default {
         width: 100%;
         height: 120px;
         background: #fff;
-        box-shadow: #ddd 0px 0px 10px 1px ;        
+        box-shadow: #ddd 0px 0px 10px 1px ;   
+        img{
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }     
       }
       .article-list{
         width: 100%;
@@ -152,6 +192,9 @@ export default {
           background: #fff;
           border-radius: 2px;
           font-weight:bold;
+          .more{
+            display: none;
+          }
           div{
             float: left;
             width: 80px;
@@ -181,6 +224,7 @@ export default {
     }
   }
 }
+ 
 </style>
 <style  >
 body{

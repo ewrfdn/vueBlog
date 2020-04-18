@@ -50,7 +50,7 @@ export default {
         }
       },
       getMsg:function(Response,file,fileList){
-        let rsp=eval(Response);
+        let rsp=eval('('+Response+')');
         console.log(Response);
         if(rsp.statue){
           console.log(rsp.status);

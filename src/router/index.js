@@ -1,16 +1,25 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
-import login from "../views/login.vue"
-import tank from "../views/tank.vue"
-import editor from "../views/editor.vue"
-import hello from "../views/view.vue"
-import article from "../views/article.vue"
-import index from "../views/index.vue"
-import articleList from "../components/articleList.vue"
-import hot from "../components/hot.vue"
-
+// import Home from '../views/Home.vue'
+import { routeGuard } from './permission'
+const login = () =>
+    import ("../views/login.vue")
+const tank = () =>
+    import ("../views/tank.vue")
+const editor = () =>
+    import ("../views/editor.vue")
+const article = () =>
+    import ("../views/article.vue")
+const index = () =>
+    import ("../views/index.vue")
+const articleList = () =>
+    import ("../components/articleList.vue")
+const hot = () =>
+    import ("../components/hot.vue")
+import more from "../components/toolList.vue"
+import setting from "../views/manage.vue"
 Vue.use(VueRouter)
+
 
 const routes = [{
         path: '/',
@@ -18,57 +27,44 @@ const routes = [{
         component: index,
         redirect: "/home",
         meta: {
-            title: "home"
+            title: "home",
+            islogin: false,
         },
         children: [{
             path: 'home',
+            name: "home",
             component: articleList,
         }, {
             path: 'hot',
+            name: 'hot',
             component: hot,
         }, ]
     },
-    // {
-    //     path: '/home',
-    //     name: 'home',
-    //     component: index,
-    //     meta: {
-    //         title: "home"
-    //     },
-    //     childern: [{
-    //             path: 'articleList',
-    //             component: articleList,
-
-    //         },
-    //         {
-
-    //         }
-    //     ]
-    // },
     {
         path: '/login',
         name: 'login',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
-        component: login
+        component: login,
+        meta: {
+            title: 'login',
+            islogin: false,
+        }
     },
     {
         path: '/t',
-        name: '在线制作幻影坦克',
+        name: 'tank',
         component: tank,
         meta: {
             title: "在线制作幻影坦克"
         },
-
     }, {
-        path: '/editor',
-        name: '在线编辑',
+        path: '/editor/:a_id?',
+        name: 'editor',
         component: editor,
+        props: true,
         meta: {
-            title: "编辑博客"
+            title: "编辑博客",
+            islogin: true,
         }
-
     }, {
         path: '/view',
         name: 'v',
@@ -86,7 +82,26 @@ const routes = [{
         meta: {
             title: "文章"
         }
-    }
+    }, {
+        path: '/setting',
+        name: 'setting',
+        component: setting,
+        meta: {
+            title: "管理",
+            islogin: true,
+
+        },
+        children: [{
+            path: '/view',
+            component: articleList,
+        }, {
+            path: '/article',
+            component: hot,
+        }, {
+            path: '/comment',
+            component: more,
+        }, ]
+    },
 
 ]
 
@@ -94,4 +109,6 @@ const router = new VueRouter({
     routes
 })
 
+
 export default router
+router.beforeEach(routeGuard)

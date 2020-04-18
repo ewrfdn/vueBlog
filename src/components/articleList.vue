@@ -1,57 +1,91 @@
 <template>
   <div class="container">
-  
-    <article-card-vue 
-    v-for="(item,index) in articleList" :key="index"
-    :id="item.id"
-    :title="item.title"
-    :context="item.context"
-    :preview="item.preview"
-    :starNumber="item.star"
-    :commentCount="item.commentCount"
-    :time="item.time"
-    :darkmode="darkmode"></article-card-vue>
+    <article-card-vue
+      v-for="(item,index) in articleList"
+      :key="index"
+      :id="item.id"
+      :title="item.title"
+      :context="item.context"
+      :preview="item.preview"
+      :starNumber="item.star"
+      :commentCount="item.commentCount"
+      :time="item.time"
+      :darkmode="darkmode"
+      :views="item.views"
+    ></article-card-vue>
+    <card-frame-work-vue :darkmode="darkmode" :display="showLoad"></card-frame-work-vue>
   </div>
 </template>
 
 <script>
-import articleCardVue from './articleCard.vue';
-import axios from "../../node_modules/axios"
+import { getArticleData} from "../api/api"
+import articleCardVue from "./articleCard.vue";
+import axios from "../../node_modules/axios";
+import cardFrameWorkVue from "./cardFrameWork.vue";
 export default {
-  created(){
-    this.load()
+  created() {
+    this.url=this.$route.params.url||"/api/article?t=list&sort=desc"
+    this.load();
   },
-  data(){
-    return{
-      articleList:[],
-      url:"/api/article?t=list&sort=desc",
-      start:1,
-      number:5,
-    }
+  mounted() {
+    window.addEventListener("scroll", () => {
+      if (this.loadAll) {
+        if (
+          window.scrollY + window.innerHeight >=
+          document.body.clientHeight + 40
+        ) {
+          this.load();
+        }
+      }
+    });
+  },
+  data() {
+    return {
+      articleList: [],
+      url: "/api/article?t=list&sort=desc",
+      start: 0,
+      number: 5,
+      showLoad: false,
+      loadAll: true
+
+    };
   },
   props: {
     darkmode: {
       default: false
-    }
+    },
+    u:{
+      default:''
+    },
   },
   methods: {
-    load:function(){
-      var url=this.url+"&s="+this.start+"&n="+this.number;
-      console.log(url)
-      var that=this
-      axios({
-        method:"get",
-        url:url
-      }).then((res)=>{
-        var list=eval(res.data)
-        for(var i=0;i<list.length;i++){
-          this.articleList.push(JSON.parse(list[i]))
+    load: function() {
+      this.showLoad = true;
+      var that = this;
+      let params={
+        t:"list",
+        sort:"desc",
+        s:this.start,
+        n:this.number,
+      }
+      this.start += this.number;
+     getArticleData(params).then(res => {
+        if (res == "") {
+          this.loadAll = false;
         }
-      })
+        
+        var list = eval(res);
+        for (var i = 0; i < list.length; i++) {
+          this.articleList.push(JSON.parse(list[i]));
+        }
+        this.number = 3;
+        this.showLoad = false;
+      });
     }
   },
-  components:{
+  components: {
     articleCardVue,
+    cardFrameWorkVue
   }
 };
 </script>

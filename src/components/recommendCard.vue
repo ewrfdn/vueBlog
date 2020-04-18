@@ -38,7 +38,8 @@ export default {
     },
     time: {
       default: "1970-1-1"
-    }
+    },
+   
   },
   methods:{
       clickHandle:function(){
@@ -50,7 +51,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
 .darkFont0{
     color:#fff !important;
 }
@@ -96,5 +96,4 @@ export default {
     }
 }
   }
-
 </style>

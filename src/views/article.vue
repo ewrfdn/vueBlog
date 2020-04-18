@@ -1,9 +1,9 @@
 <template>
   <div class="main-div" :class="{darkBg0:darkmode}">
-    <nav-bar :darkmode="darkmode"></nav-bar>
+    <nav-bar :darkmode="darkmode" title="文章"></nav-bar>
     <div class="contain">
       <div class="cover-pic">
-        <img :src="'/api/coverPhoto?id='+article.id"/>
+        <img :src="'/api/coverPhoto?id='+article.id" />
       </div>
       <div class="title-div" :class="{darkFont0:darkmode}">
         <div class="title">
@@ -22,9 +22,11 @@
           </p>
         </div>
       </div>
-      <article-context-vue :darkmode="darkmode" 
-      :forceDark="defaultContext"
-      :data="article.context"
+      <article-context-vue
+        :darkmode="darkmode"
+        :forceDark="defaultContext"
+        :data="article.context"
+        :id="article.id"
       ></article-context-vue>
       <div class="context-foot">
         <div class="tag-div">
@@ -63,20 +65,40 @@
 </template>
 
 <script>
+import { getArticleData,getRecommend } from "../api/api.js";
 import navBar from "../components/navBar1.vue";
 import recommendCardVue from "../components/recommendCard.vue";
 import gotoTopVue from "../components/gotoTop.vue";
 import settingVue from "../components/setting.vue";
 import tagVue from "../components/tag.vue";
-import articleContextVue from '../components/articleContext.vue';
-
+import articleContextVue from "../components/articleContext.vue";
+import axios from "../../node_modules/axios";
 export default {
   created() {
-    var url = "/api/article?id=" + this.id;
-    this.getData(url).then(this.processData, function() {
-      console.log("err");
+    axios({
+      method: "post",
+      url: "/api/statistic",
+      data: {
+        type: "views",
+        id: this.id
+      }
     });
+    this.getData()
     this.getLocalStorage();
+    // axios({
+    //   method: "post",
+    //   url: "/api/proveUser",
+    //   data: { token: this.token }
+    // }).then(response => {
+    //   if (response.data == "failed") {
+    //   } else {
+    //     var storage = window.localStorage;
+    //     console.log(response);
+    //     this.login = true;
+    //     storage.token = response.data;
+    //     this.token = response.data;
+    //   }
+    // });
   },
   mounted() {
     if (this.darkmode && !this.defaultContext) {
@@ -94,15 +116,17 @@ export default {
       closeSetting: true,
       defaultContext: false,
       followSystem: true,
+      islogin: false,
+      token: "",
       article: {
-        id:0,
-        title: "这是文章标题",
-        context: "<p>默认文章内容</p>",
-        time: "1970-1-1",
-        updateTime: "1970-1-2",
-        count: "0",
-        star: "0",
-        theme: "javascript   typesript   vue"
+        id: 0,
+        title: "",
+        context: "",
+        time: "",
+        updateTime: "",
+        count: "",
+        star: "",
+        theme: ""
       },
       user: {
         name: "张晖",
@@ -128,21 +152,30 @@ export default {
         context[i].className = "a";
       }
     },
-    getData: function(url) {
-      var promise = new Promise((resolve, reject) => {
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-          if (xhr.readyState != 4) return;
-          if (xhr.readyState == 4 && xhr.status == 200) {
-            resolve(xhr.responseText);
-          } else {
-            reject();
-          }
-        };
-        xhr.open("get", url);
-        xhr.send(null);
-      });
-      return promise;
+    getData: function() {
+     getArticleData({id:this.id}).then(res=> {
+      this.article = eval(res);
+      let temp=this.article.theme;
+      this.article.theme = this.article.theme.split(" ");
+      for (var i = 0; i < this.article.theme.length; i++) {
+        if (!this.article.theme[i]) {
+          this.article.theme.splice(i, 1);
+          i--;
+        }
+      }
+      return temp;
+    }).then(res=>{
+      getRecommend({
+        q:res,
+        id:this.id,
+        n:10,
+      }).then(data=>{
+        alert(data)
+        return data;
+
+      })     
+    }).then(res=>{
+    }) ;
     },
     processData: function(data) {
       this.article = JSON.parse(data);
@@ -156,7 +189,6 @@ export default {
     },
     getLocalStorage: function() {
       var storage = window.localStorage;
-
       if (storage.autoTheme == "false" && storage.followSystem == "false") {
         if (storage.theme === "dark") {
           this.darkmode = true;
@@ -183,8 +215,7 @@ export default {
     gotoTopVue,
     settingVue,
     tagVue,
-articleContextVue,
-
+    articleContextVue
   },
   watch: {
     darkmode: function(val) {
@@ -195,6 +226,8 @@ articleContextVue,
       // }
       if (val) {
         document.body.style.background = "#242424";
+      } else {
+        document.body.style.background = "#fff";
       }
     },
     defaultContext: function(val) {

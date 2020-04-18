@@ -18,13 +18,13 @@
         </p>
       </div>
       <div class="full-context-div" ref="full">
-        <article-context-vue :darkmode="darkmode" :data="context"></article-context-vue>
+        <article-context-vue :darkmode="darkmode" :data="context" :id="id"></article-context-vue>
       </div>
     </div>
 
     <div class="bottom-div" ref="bottom" :class="{darkFontG1:darkmode,darkBgG0:darkmode}">
       <div class="bottom-inner-div">
-        <div>
+        <div >
           <el-button class="star-button" @click="star()">
             <i class="el-icon-caret-top"></i>点赞
           </el-button>
@@ -33,6 +33,12 @@
           <button class="option" v-cloak @click="comment()">
             <i class="el-icon-s-comment"></i>
             {{commentCount}}条评论
+          </button>
+        </div>
+         <div>
+          <button class="option" v-cloak @click="comment()">
+            <i class="el-icon-s-comment"></i>
+            阅读量{{views}}
           </button>
         </div>
         <div>
@@ -75,13 +81,13 @@
             </el-dropdown-menu>
           </el-dropdown>
         </div>
-        <div>
+        <div class="time-div">
           <button class="option" v-cloak>
             <i class="el-icon-s-opportunity"></i>
             发布于 {{time}}
           </button>
         </div>
-        <div class="retract-div" @click="retract()" ref="retract" >
+        <div class="retract-div" @click="retract()" ref="retract">
           <p :class="{darkFontG1:darkmode}">
             <i class="el-icon-arrow-up"></i>收起
           </p>
@@ -92,26 +98,35 @@
 </template>
 
 <script>
-import articleContextVue from "./articleContext.vue";
+// import articleContextVue from "./articleContext.vue";
+import axios from "../../node_modules/axios"
 export default {
-  mounted(){
-    window.addEventListener('scroll',()=>{
-      if(this.isfixed){
-        if(window.screen.availHeight+window.scrollY>this.contextY){
-          this.$refs.bottom.style.position="absolute"
-        }else if(window.scrollY<this.contextY0){
-          this.$refs.bottom.style.position="absolute"
+  mounted() {
+    window.addEventListener("scroll", () => {
+      if (this.isfixed) {
+        if (window.screen.availHeight + window.scrollY > this.contextY) {
+          this.$refs.bottom.style.position = "absolute";
+        } else if (window.scrollY < this.contextY0) {
+          this.$refs.bottom.style.position = "absolute";
           // this.retract()
-        }else{
-          this.$refs.bottom.style.position="fixed"
+        } else {
+          this.$refs.bottom.style.position = "fixed";
         }
-        
-        
       }
-    })
-    window.addEventListener("onresize",function(){
-      alert(1)
-    })
+    });
+    window.addEventListener("click", e => {
+      if (this.isfixed) {
+        if (e.clientY + window.scrollY < this.contextY-this.contextY0) {
+          window.setTimeout(()=>{
+          var t=this.$refs.main.parentNode.clientHeight-this.contextHeight;
+          this.contextY+=t;
+          this.contextY0+=t;
+          this.contextHeight=this.$refs.main.parentNode.clientHeight;
+          },100)
+        
+        }
+      }
+    });
   },
   props: {
     id: {
@@ -123,6 +138,9 @@ export default {
             MacBook Pro 16 寸上的剪刀脚键盘. 在 Geekbench 5 中, 性能相比上一代有了明显提升. 但是我们仍"
     },
     context: {},
+     views:{
+      default:'0'
+    },
     title: {
       default: "这是标题，这是标题"
     },
@@ -147,11 +165,10 @@ export default {
   },
   data() {
     return {
-      isfixed:false,
-      contextY:0,
-      contextY0:0,
-
-
+      isfixed: false,
+      contextY: 0,
+      contextY0: 0,
+      contextHeight:0
     };
   },
   methods: {
@@ -166,32 +183,42 @@ export default {
       alert("star");
     },
     showFull: function(e) {
+      axios({
+      method:"post",
+      url:"/api/statistic",
+      data:{
+        type:'views',
+        id:this.id,
+      }
+    })
       this.$refs.cover.style.display = "none";
       this.$refs.preview.style.display = "none";
       this.$refs.full.style.display = "block";
       this.$refs.retract.style.display = "block";
       var top = this.$refs.preview.parentNode.getBoundingClientRect().top;
       if (this.$refs.full.clientHeight + top > window.screen.availHeight) {
-        this.contextY=this.$refs.full.clientHeight+window.scrollY+top;
-        this.contextY0=window.scrollY;
-        this.$refs.bottom.style.position='fixed'
-        this.isfixed=true;
+        
+        this.$refs.bottom.style.position = "fixed";
+        this.isfixed = true;
       }
-      alert(this.$refs.main.parentNode.clientHeight)
+      this.contextY = this.$refs.full.clientHeight + window.scrollY + top;
+      this.contextY0 = window.scrollY;
+      this.contextHeight=this.$refs.main.parentNode.clientHeight
     },
     retract: function() {
       this.$refs.cover.style.display = "block";
       this.$refs.preview.style.display = "block";
       this.$refs.full.style.display = "none";
       this.$refs.retract.style.display = "none";
-      this.isfixed=false;
+      this.$refs.bottom.style.position = "absolute";
+      this.isfixed = false;
     },
     comment: function() {
       alert("comment");
     }
   },
   components: {
-    articleContextVue
+    articleContextVue:()=>import('./articleContext.vue')
   }
 };
 </script>
@@ -205,6 +232,7 @@ export default {
   padding-top: 10px;
   padding-bottom: 70px;
   border-bottom: #eee 1px solid;
+  overflow: hidden;
   .title-div {
     margin-left: 3%;
     padding-bottom: 10px;
@@ -309,7 +337,7 @@ export default {
       }
       .retract-div {
         position: absolute;
-         color: #606060;
+        color: #606060;
         right: 50px;
         top: 10px;
         line-height: 30px;
@@ -317,6 +345,17 @@ export default {
         cursor: pointer;
         text-align: center;
       }
+    }
+  }
+  @media screen and( max-width:550px) {
+    .img-div{
+      width: 94% !important;
+    }
+    .preview-div{
+      width: 94% !important;
+    }
+    .time-div,.share-div{
+      display: none;
     }
   }
 }

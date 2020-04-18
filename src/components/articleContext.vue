@@ -6,6 +6,9 @@
 
 <script>
 export default {
+  created(){
+    
+  },
   updated() {
       if(this.forceDark&&this.darkmode){
             this.changeColor()
@@ -43,6 +46,9 @@ export default {
     },
     data:{
         default:"",
+    },
+    id:{
+      default :1
     }
   },
   watch: {

@@ -2,7 +2,7 @@
   <div id="nav" :class="{darkBg:darkmode}">
       <el-row :gutter="30">
   <el-col :span="12">
- <div class="part tit-div" ><p><span class="tit">张晖的博客</span ><span :class="{darkFont0:darkmode}">|写文章</span></p></div>
+ <div class="part tit-div" ><p><span class="tit">张晖的博客</span ><span :class="{darkFont0:darkmode}" v-cloak>|{{title}}</span></p></div>
   </el-col>
   <el-col :span="12">
       <div class="nav-right">
@@ -14,25 +14,42 @@
     <el-dropdown-item class="drop" icon="el-icon-set-up" :class="{itemDarkmode:darkmode}">个人管理页面</el-dropdown-item>
     <el-dropdown-item class="drop" icon="el-icon-s-order" :class="{itemDarkmode:darkmode}">查看文章</el-dropdown-item>
     <el-dropdown-item @click.native="openSetting()"  class="drop" icon="el-icon-s-tools" :class="{itemDarkmode:darkmode}">设置</el-dropdown-item>
-    <el-dropdown-item class="drop" icon="el-icon-switch-button" :class="{itemDarkmode:darkmode}">退出登录</el-dropdown-item>
+    <el-dropdown-item  class="drop logout" icon="el-icon-switch-button" :class="{itemDarkmode:darkmode,displayLogout:isLogin}" @click.native="logout()">退出登录</el-dropdown-item>
   </el-dropdown-menu>
 </el-dropdown>
       </div>
   </el-col>
 </el-row>
+
   </div>
 </template>
 
 <script>
+import {getCookie,setCookie,getStore,removeStore} from '../scripts/storage'
 export default {
+  created(){
+    if(getCookie('islogin')=='true'){
+      this.isLogin=true;
+    }else{
+      this.isLogin=false;
+      let uid=getStore('uid')
+      let token=getStore("token")
+      console.log(uid)
+    }
+  },
   props:{
     darkmode:{
       default:false,
-    }
+    },
+  title:{
+     default:"主页"
+   }
   },
     data(){
       return{
+        isLogin:false,
         activeIndex: '1',
+        
       }
       
     },
@@ -42,7 +59,18 @@ export default {
       },
       openSetting:function(){
         this.$parent.closeSetting=false;
+      },
+      logout:function(){
+        var storage=window.localStorage;
+        setCookie('islogin','false')
+        this.isLogin=false;
+        removeStore('uid');
+        removeStore("token")
+        this.$router.push("/home");
       }
+    },
+    components:{
+
     }
 
 }
@@ -57,7 +85,11 @@ export default {
 .darkBg{
     background: #000 !important;
     }
-
+.button{
+  position: absolute;
+  left: 10px;
+  top: 0;
+}
 
 #nav{
     width: 100%;
@@ -109,8 +141,15 @@ export default {
             line-height: 50px !important;
             background: chartreuse;
         }
+
    
 
+}
+.displayLogout{
+  display: block !important;
+}
+.logout{
+  display: none;
 }
 </style>
 <style  >
