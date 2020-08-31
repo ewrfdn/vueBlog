@@ -13,6 +13,10 @@ export const getStore = name => {
     if (!name) return;
     return window.localStorage.getItem(name);
 }
+export const setStore = name => {
+    if (!name) return;
+    return window.localStorage.getItem(name);
+}
 
 /**
  * 删除localStorage

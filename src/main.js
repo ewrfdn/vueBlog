@@ -3,11 +3,13 @@ import App from './App.vue'
 import router from './router'
 import './plugins/element.js'
 import axios from '../node_modules/axios'
-import VueFluent from "../node_modules/vfluentdesign";
-import "vfluentdesign/lib/index.css";
-
+import 'ant-design-vue/dist/antd.css';
+// import VueFluent from "../node_modules/vfluentdesign";
+// import "vfluentdesign/lib/index.css";
+import antd from "ant-design-vue"
 Vue.config.productionTip = false
-Vue.use(VueFluent);
+    // Vue.use(VueFluent);
+Vue.use(antd)
 new Vue({
     router,
 

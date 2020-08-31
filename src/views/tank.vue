@@ -78,6 +78,8 @@ L(2)=alpha*L(mix) <br>
      <p>所有上传图片都会保留15日后被自动删除，不会有存留 </p>
 <hr>
 </div>
+     <calander></calander>
+     <dp></dp>
 <foot></foot>
 </div>
 </template>
@@ -85,6 +87,8 @@ L(2)=alpha*L(mix) <br>
 import uploadPhoto from "../components/upLoadSinglePic"
 import foot from "../components/foot"
 import axios from '../../node_modules/axios'
+import calander from "../components/diy/calendar"
+import dp from "../components/diy/dp"
 export default {
     data(){
         return{
@@ -191,6 +195,7 @@ export default {
     components:{
         uploadPhoto,
         foot,
+        calander,dp
     }
 }
 
