@@ -2,7 +2,9 @@
   <div > 
       <a-input v-model="inputValue"></a-input>
       <a-input v-model="inputValue1"></a-input>
-      <a-button @click="getRes">计算</a-button>
+      <a-button @click="getMaxRes">计算最大</a-button>
+      <a-button @click="getMinRes">计算最小</a-button>
+
   </div>
 </template>
 
@@ -31,46 +33,79 @@ export default {
             })
             console.log(this.arr2)
         }
-
     },
     methods:{
-        getRes(){
+        getMinRes(){
             let res=this.callBack(this.arr1,this.arr2,0,[],0)
             console.log(res)
         },
-        callBack(start,target,tcur,res,splitCount){//最少拆箱算法
-            if(target.length===tcur){
-                // console.log( {count:splitCount,res:res})
+        getMaxRes(){
+               let res=this.callBackMax(this.arr1,this.arr2,0,[],0)
+            console.log(res)
+        },
+         callBackMax(barCode,shipping,tcur,res,splitCount){//最少拆箱算法 barCode 条码数组 shipping 订单数组，tcur 当前订单数组完成指针 res 之前操作的结果数组，splitCount 拆箱次数
+            if(shipping.length===tcur){
                 return {count:splitCount,res:res}
             }
-            let temp=[]
-            for(let i=0;i<start.length;i++){
-                if(start[i]===0){
+            let temp=[] // 记录循环后所有的结果
+            for(let i=0;i<barCode.length;i++){
+                if(barCode[i]===0){//条码中数量已用完
                     continue
                 }
-                    if(start[i]-target[tcur]<0){
-                        let startCopy=[...start]
-                        let targetCopy=[...target]
-                        targetCopy[tcur]=target[tcur]-start[i]
-                        startCopy[i]=0
+                    if(barCode[i]-shipping[tcur]<0){
+                        let barCodeCopy=[...barCode]
+                        let shippingCopy=[...shipping]
+                        shippingCopy[tcur]=shipping[tcur]-barCode[i]
+                        barCodeCopy[i]=0
 
-                       temp.push( this.callBack(startCopy,targetCopy,tcur,[...res,{key:i,value:start[i]}],splitCount))
-                    }else if(start[i]-target[tcur]>0){
-                          let startCopy=[...start]
-                        startCopy[i]=start[i]-target[tcur]
-                       temp.push( this.callBack(startCopy,target,tcur+1,[...res,{key:i,value:target[tcur]}],splitCount+1))
+                       temp.push( this.callBack(barCodeCopy,shippingCopy,tcur,[...res,{key:i,value:barCode[i]}],splitCount))
+                    }else if(barCode[i]-shipping[tcur]>0){
+                          let barCodeCopy=[...barCode]
+                        barCodeCopy[i]=barCode[i]-shipping[tcur]
+                       temp.push( this.callBack(barCodeCopy,shipping,tcur+1,[...res,{key:i,value:shipping[tcur]}],splitCount+1))
                         
                     }else{
-                        let startCopy=[...start]
-                        startCopy[i]=0
-                       temp.push( this.callBack(startCopy,target,tcur+1,[...res,{key:i,value:start[i]}],splitCount))
+                        let barCodeCopy=[...barCode]
+                        barCodeCopy[i]=0
+                       temp.push( this.callBack(barCodeCopy,shipping,tcur+1,[...res,{key:i,value:barCode[i]}],splitCount))
                     }
             }
-            // if(temp.length==0){
-            //     return {}
-            
-            // console.log(temp)
-            let mini=temp[0]
+            let mini=temp[0]// 获取返回最小值
+            for(let i=1;i<temp.length;i++){
+                if(mini.count<temp[i].count){
+                    mini=temp[i]
+                }
+            }
+            return mini
+        },
+        callBack(barCode,shipping,tcur,res,splitCount){//最少拆箱算法 barCode 条码数组 shipping 订单数组，tcur 当前订单数组完成指针 res 之前操作的结果数组，splitCount 拆箱次数
+            if(shipping.length===tcur){
+                return {count:splitCount,res:res}
+            }
+            let temp=[] // 记录循环后所有的结果
+            for(let i=0;i<barCode.length;i++){
+                if(barCode[i]===0){//条码中数量已用完
+                    continue
+                }
+                    if(barCode[i]-shipping[tcur]<0){
+                        let barCodeCopy=[...barCode]
+                        let shippingCopy=[...shipping]
+                        shippingCopy[tcur]=shipping[tcur]-barCode[i]
+                        barCodeCopy[i]=0
+
+                       temp.push( this.callBack(barCodeCopy,shippingCopy,tcur,[...res,{key:i,value:barCode[i]}],splitCount))
+                    }else if(barCode[i]-shipping[tcur]>0){
+                          let barCodeCopy=[...barCode]
+                        barCodeCopy[i]=barCode[i]-shipping[tcur]
+                       temp.push( this.callBack(barCodeCopy,shipping,tcur+1,[...res,{key:i,value:shipping[tcur]}],splitCount+1))
+                        
+                    }else{
+                        let barCodeCopy=[...barCode]
+                        barCodeCopy[i]=0
+                       temp.push( this.callBack(barCodeCopy,shipping,tcur+1,[...res,{key:i,value:barCode[i]}],splitCount))
+                    }
+            }
+            let mini=temp[0]// 获取返回最小值
             for(let i=1;i<temp.length;i++){
                 if(mini.count>temp[i].count){
                     mini=temp[i]
