@@ -30,12 +30,14 @@
     </div>
 </div>
 <el-button class="download-button" style="margin-left: 10px;" size="small" type="success" @click="download" :disabled= "disableDownload">下载</el-button>
+<chart></chart>
 </div>
 
 </template>
 <script>
 import uploadPhoto from "../components/upLoadSinglePic"
 import axios from '../../node_modules/axios'
+import chart from "../components/diy/chart"
 export default {
     data(){
         return{
@@ -136,6 +138,7 @@ export default {
     },
     components:{
         uploadPhoto,
+        chart
     }
 }
 

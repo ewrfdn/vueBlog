@@ -107,7 +107,7 @@ export default {
             }
             let mini=temp[0]// 获取返回最小值
             for(let i=1;i<temp.length;i++){
-                if(mini.count>temp[i].count){
+                if(mini.count<temp[i].count){
                     mini=temp[i]
                 }
             }
