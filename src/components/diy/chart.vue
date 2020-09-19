@@ -1,48 +1,199 @@
 <template>
-  <div id="myChart" ref="chart" style="width:100%;min-height:400px"></div>
+  <a-card>
+    <a-card>
+      <a-form>
+        <a-row :gutter="12">
+          <a-col :span="2">
+            <a-form-item>新增系列</a-form-item>
+          </a-col>
+          <a-col :span="4">
+            <a-form-item label="系列名称" :labelCol="{span:8}" :wrapperCol="{span:16}">
+              <a-input v-model="series.name"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="4">
+            <a-form-item label="系列颜色" :labelCol="{span:8}" :wrapperCol="{span:16}">
+              <a-input v-model="series.color"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="4">
+            <a-form-item>
+              <a-button type="primary" @click="addSeries()">新增</a-button>
+            </a-form-item>
+          </a-col>
+          <a-col :span="2">
+            <a-form-item>删除系列</a-form-item>
+          </a-col>
+          <a-col :span="4">
+            <a-form-item :labelCol="{span:8}" :wrapperCol="{span:16}">
+              <a-select>
+                <a-select-option
+                  v-for="(item,key) in seriesOptions"
+                  :key="key"
+                  :value="item"
+                >{{item}}</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+          <a-col :span="4">
+            <a-form-item>
+              <a-button type="danger" @click="deleteSeries">删除</a-button>
+            </a-form-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="12">
+          <a-col :span="2">
+            <a-form-item>新增系列项目</a-form-item>
+          </a-col>
+          <a-col :span="4">
+            <a-form-item label="系列名字" required :labelCol="{span:8}" :wrapperCol="{span:16}">
+              <a-select v-model="seriesItem.series">
+                <a-select-option
+                  v-for="(item,key) in seriesOptions"
+                  :key="key"
+                  :value="item"
+                >{{item}}</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+          <a-col :span="4">
+            <a-form-item label="起始值" :labelCol="{span:8}" :wrapperCol="{span:16}">
+              <a-input-number v-model="seriesItem.startValue" style="width:100%"></a-input-number>
+            </a-form-item>
+          </a-col>
+          <a-col :span="4">
+            <a-form-item label="跨度值" required :labelCol="{span:8}" :wrapperCol="{span:16}">
+              <a-input-number v-model="seriesItem.spanValue" style="width:100%"></a-input-number>
+            </a-form-item>
+          </a-col>
+          <a-col :span="4">
+            <a-form-item>
+              <a-button type="primary" @click="addSeriesItem()">新增</a-button>
+            </a-form-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="12">
+          <a-col :span="2">
+            <a-form-item>删除系列值</a-form-item>
+          </a-col>
+          <a-col :span="4">
+            <a-form-item label="系列" :labelCol="{span:8}" :wrapperCol="{span:16}">
+              <a-select>
+                <a-select-option
+                  v-for="(item,key) in seriesOptions"
+                  :key="key"
+                  :value="item"
+                >{{item}}</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+          <a-col :span="4">
+            <a-form-item label="项目" :labelCol="{span:8}" :wrapperCol="{span:16}">
+              <a-select>
+                <a-select-option
+                  v-for="(item,key) in seriesOptions"
+                  :key="key"
+                  :value="item"
+                >{{item}}</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+          <a-col :span="4">
+            <a-form-item>
+              <a-button type="danger" @click="deleteSeries">删除</a-button>
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-form>
+    </a-card>
+    <div id="myChart" ref="chart" style="width:100%;min-height:400px"></div>
+  </a-card>
 </template>
 <script>
+import mixin from "./chartMixin";
 export default {
   //   updated(){
   //       this.changeView();
   //     },
   mounted() {
     this.myChart = this.$echarts.init(this.$refs.chart);
-    this.drawLine()
+    this.setChart();
     this.resetGraphic();
   },
+  mixins: [mixin],
   data() {
     return {
+      series: {},
+      seriesItem: {},
       myChart: null,
-      Y: [],
+      seriesList: [
+        {
+          name: "辅助",
+          type: "bar",
+          stack: "总量",
+          itemStyle: {
+            normal: {
+              barBorderColor: "rgba(0,0,0,0)",
+              color: "rgba(0,0,0,0)",
+            },
+            emphasis: {
+              barBorderColor: "rgba(0,0,0,0)",
+              color: "rgba(0,0,0,0)",
+            },
+          },
+          data: [],
+        },
+        {
+          name: "group1",
+          type: "bar",
+          stack: "总量",
+          // label: {
+          //   normal: {
+          //     show: true,
+          //     position: "top",
+          //   },
+          // },
+          data: [],
+        },
+        {
+          name: "group2",
+          type: "bar",
+          stack: "总量",
+          // label: {
+          //   normal: {
+          //     show: true,
+          //     position: "bottom",
+          //   },
+          // },
+          data: [],
+        },
+      ],
+      seriesOptions: ["group1", "group2"],
+      seriesValueList: [
+        ["-", "-", "-", 108, 154, "-", "-", "-", 119, 361, 203],
+        [900, 345, 393, "-", "-", 135, 178, 286, "-", "-", "-"],
+      ],
+      yAxisData: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
       resetTimer: null,
       timer: true,
       dataList: [0, 900, 1245, 1530, 1376, 1376, 1511, 1689, 1856, 1495, 1292],
       series1Value: [900, 345, 393, "-", "-", 135, 178, 286, "-", "-", "-"],
-      series2Value: ["-", "-", "-", 108, 154, '-', "-", "-", 119, 361, 203],
+      series2Value: ["-", "-", "-", 108, 154, "-", "-", "-", 119, 361, 203],
       option: {
         graphic: [],
         title: {
-          text: "阶梯瀑布图",
+          text: "甘特图",
         },
+        animation:false,
         tooltip: {
           trigger: "axis",
           axisPointer: {
             // 坐标轴指示器，坐标轴触发有效
             type: "shadow", // 默认为直线，可选为：'line' | 'shadow'
           },
-          // formatter: function (params) {
-          //   var tar;
-          //   if (params[1].value != "-") {
-          //     tar = params[1];
-          //   } else {
-          //     tar = params[0];
-          //   }
-          //   return tar.name + "<br/>" + tar.seriesName + " : " + tar.value;
-          // },
         },
         legend: {
-          data: ["支出", "收入"],
+          data: [],
         },
         grid: {
           left: "3%",
@@ -54,323 +205,72 @@ export default {
         yAxis: {
           type: "category",
           splitLine: { show: false },
-          data: (function () {
-            var list = [];
-            for (var i = 1; i <= 11; i++) {
-              list.push(i);
-            }
-            return list;
-          })(),
+          data: [],
         },
         xAxis: {
           type: "value",
         },
-        series: [
-          {
-            name: "辅助",
-            type: "bar",
-            stack: "总量",
-            itemStyle: {
-              normal: {
-                barBorderColor: "rgba(0,0,0,0)",
-                color: "rgba(0,0,0,0)",
-              },
-              emphasis: {
-                barBorderColor: "rgba(0,0,0,0)",
-                color: "rgba(0,0,0,0)",
-              },
-            },
-            data: [],
-          },
-          {
-            name: "收入",
-            type: "bar",
-            stack: "总量",
-            label: {
-              normal: {
-                show: true,
-                position: "top",
-              },
-            },
-            data: [],
-          },
-          {
-            name: "支出",
-            type: "bar",
-            stack: "总量",
-            label: {
-              normal: {
-                show: true,
-                position: "bottom",
-              },
-            },
-            data: [],
-          },
-        ],
+        series: [],
       },
     };
   },
   methods: {
-    drawLine() {
-      // 基于准备好的dom，初始化echarts实例
-      // var bar_dv = document.getElementById('bar_dv');
-
-      // 基于准备好的dom，初始化echarts实例
-      // let myChart = this.$echarts.init(document.getElementById('myChart'))
-      // 绘制图表
-    this.option.series[0].data = this.dataList;
-    this.option.series[1].data = this.series1Value;
-    this.option.series[2].data = this.series2Value;
-      this.myChart.setOption(this.option);
-    },
-    onFontDragging(dataIndex, that) {
-      // console.log(that.position);
-      // 这里的 data 就是本文最初的代码块中声明的 data，在这里会被更新。
-      // 这里的 that 就是被拖拽的圆点。that.position 就是圆点当前的位置。
-      const afterChangeValue = this.myChart.convertFromPixel(
-        "grid",
-        that.position
-      )[0];
-      if (this.series1Value[dataIndex] !== "-") {
-        this.series1Value[dataIndex] =
-          this.series1Value[dataIndex] +
-          this.dataList[dataIndex] -
-          afterChangeValue;
+    deleteSeries() {},
+    addSeries() {
+      if (!(this.series.name && this.series.color)) {
+        this.$message.warning("请填写必输项");
+        return;
       }
-      if (this.series2Value[dataIndex] !== "-") {
-        this.series2Value[dataIndex] =
-          this.series2Value[dataIndex] +
-          this.dataList[dataIndex] -
-          afterChangeValue;
+      this.seriesOptions.push(this.series.name)
+      const initValue=[];
+      for(let count in this.dataList){
+        initValue.push("-")
       }
-      this.dataList[dataIndex] = afterChangeValue;
-      // console.log(this.dataList)
-      // console.log(this.dataList);
-      // 用更新后的 data，重绘。
-      if (this.timer) {
-        this.timer = false;
-        window.setTimeout(() => {
-          this.setChart();
-          this.timer = true;
-        }, 30);
-        clearTimeout(this.resetTimer);
-        this.resetTimer = setTimeout(() => {
-          this.resetGraphic();
-        }, 500);
-      }
-    },
-    onMiddleDragging(dataIndex, that) {
-      // console.log(that.position);
-      // 这里的 data 就是本文最初的代码块中声明的 data，在这里会被更新。
-      // 这里的 this 就是被拖拽的圆点。this.position 就是圆点当前的位置。
-      const value=this.series1Value[dataIndex]==="-"?this.series2Value[dataIndex]:this.series1Value[dataIndex]
-      this.dataList[dataIndex] = this.myChart.convertFromPixel(
-        "grid",
-        that.position
-      )[0]-value/2;
-      // console.log(this.dataList);
-      // 用更新后的 data，重绘。
-      if (this.timer) {//节流防抖控制
-        this.timer = false;
-        console.log(this.dataList);
-        window.setTimeout(() => {
-          this.setChart();
-          this.timer = true;
-        }, 30);
-        clearTimeout(this.resetTimer);
-        this.resetTimer = setTimeout(() => {
-          this.resetGraphic();
-        }, 500);
-      }
-    },
-    onEndDragging(dataIndex, that) {
-      // console.log(that.position);
-      // 这里的 data 就是本文最初的代码块中声明的 data，在这里会被更新。
-      // 这里的 this 就是被拖拽的圆点。this.position 就是圆点当前的位置。
-      if(this.series1Value[dataIndex]!=="-"){
-          this.series1Value[dataIndex] = this.myChart.convertFromPixel(
-        "grid",
-        that.position
-      )[0]-this.dataList[dataIndex];
-      }
-      if(this.series2Value[dataIndex]!=="-"){
-        this.series2Value[dataIndex] = this.myChart.convertFromPixel(
-        "grid",
-        that.position
-      )[0]-this.dataList[dataIndex];
-      }
-      // console.log(this.dataList);
-      // 用更新后的 data，重绘。
-      if (this.timer) {
-        this.timer = false;
-        // console.log(this.dataList);
-        window.setTimeout(() => {
-          this.setChart();
-          this.timer = true;
-        }, 30);
-        clearTimeout(this.resetTimer);
-        this.resetTimer = setTimeout(() => {
-          this.resetGraphic();
-        }, 500);
-      }
-    },
-    setChart() {
-      this.myChart.setOption({
-        series: [
-          {
-            name: "辅助",
-            type: "bar",
-            stack: "总量",
-            itemStyle: {
-              normal: {
-                barBorderColor: "rgba(0,0,0,0)",
-                color: "rgba(0,0,0,0)",
-              },
-              emphasis: {
-                barBorderColor: "rgba(0,0,0,0)",
-                color: "rgba(0,0,0,0)",
-              },
-            },
-            data: this.dataList,
+      this.seriesValueList.push(initValue)
+      this.seriesList.push({
+        name: this.series.name,
+        type: "bar",
+        stack: "总量",
+        // label: {
+        //   normal: {
+        //     show: true,
+        //     position: "top",
+        //   },
+        // },
+        itemStyle: {
+          normal: {
+            color: this.series.color,
           },
-          {
-            name: "group1",
-            type: "bar",
-            stack: "总量",
-            label: {
-              normal: {
-                show: true,
-                position: "top",
-              },
-            },
-            data: this.series1Value,
-          },
-          {
-            name: "group2",
-            type: "bar",
-            stack: "总量",
-            label: {
-              normal: {
-                show: true,
-                position: "bottom",
-              },
-            },
-            data: this.series2Value,
-          },
-        ],
+        },
+        data: [],
       });
+      this.setChart();
     },
-    resetGraphic() {
+    addSeriesItem() {
+      if (!this.seriesItem.spanValue || !this.seriesItem.series) {
+        this.$message.warning("请输入必输项");
+        return;
+      }
+      for (let i in this.seriesValueList) {
+        this.seriesValueList[i].push("-");
+      }
+      this.yAxisData.push(this.yAxisData.length + 1);
+      if (this.seriesItem.startValue) {
+        this.dataList.push(this.seriesItem.startValue);
+      } else {
+        this.dataList.push(0);
+      }
+      console.log(this.seriesValueList)
+      for (let k = 1; k < this.seriesList.length; k++) {
+        if (this.seriesList[k].name === this.seriesItem.series) {
+          this.seriesValueList[k - 1][
+            this.seriesValueList[k - 1].length - 1
+          ] = this.seriesItem.spanValue;
+          break;
+        }
+      }
+      this.setChart();
       this.setMoveGraphic();
-    },
-    setMoveGraphic() {
-      let graphicList = [];
-      for (let i = 0; i < this.dataList.length; i++) {
-        let step = i * 3;
-        let value =
-          this.series1Value[i] === "-"
-            ? this.series2Value[i]
-            : this.series1Value[i];
-        graphicList[step] = {
-          // 'circle' 表示这个 graphic element 的类型是圆点。
-          type: "circle",
-
-          shape: {
-            // 圆点的半径。
-            r: 10,
-          },
-          // 用 transform 的方式对圆点进行定位。position: [x, y] 表示将圆点平移到 [x, y] 位置。
-          // 这里使用了 convertToPixel 这个 API 来得到每个圆点的位置，下面介绍。
-          position: this.myChart.convertToPixel("grid", [
-            this.dataList[i],
-            this.option.yAxis.data[i] - 1,
-          ]),
-
-          // 这个属性让圆点不可见（但是不影响他响应鼠标事件）。
-          invisible: true,
-          // 这个属性让圆点可以被拖拽。
-          draggable: true,
-          // 把 z 值设得比较大，表示这个圆点在最上方，能覆盖住已有的折线图的圆点。
-          z: 100,
-          // 此圆点的拖拽的响应事件，在拖拽过程中会不断被触发。下面介绍详情。
-          // 这里使用了 echarts.util.curry 这个帮助方法，意思是生成一个与 onPointDragging
-          // 功能一样的新的函数，只不过第一个参数永远为此时传入的 dataIndex 的值。
-          ondrag: this.$echarts.util.curry(
-            function (dataIndex, that) {
-              that.onFontDragging(dataIndex, this);
-            },
-            i,
-            this
-          ),
-        };
-        graphicList[step + 1] = {
-          // 'circle' 表示这个 graphic element 的类型是圆点。
-          type: "circle",
-
-          shape: {
-            // 圆点的半径。
-            r: 10,
-          },
-          // 用 transform 的方式对圆点进行定位。position: [x, y] 表示将圆点平移到 [x, y] 位置。
-          // 这里使用了 convertToPixel 这个 API 来得到每个圆点的位置，下面介绍。
-          position: this.myChart.convertToPixel("grid", [
-            this.dataList[i] + value / 2,
-            this.option.yAxis.data[i] - 1,
-          ]),
-
-          // 这个属性让圆点不可见（但是不影响他响应鼠标事件）。
-          invisible: true,
-          // 这个属性让圆点可以被拖拽。
-          draggable: true,
-          // 把 z 值设得比较大，表示这个圆点在最上方，能覆盖住已有的折线图的圆点。
-          z: 100,
-          // 此圆点的拖拽的响应事件，在拖拽过程中会不断被触发。下面介绍详情。
-          // 这里使用了 echarts.util.curry 这个帮助方法，意思是生成一个与 onPointDragging
-          // 功能一样的新的函数，只不过第一个参数永远为此时传入的 dataIndex 的值。
-          ondrag: this.$echarts.util.curry(
-            function (dataIndex, that) {
-              that.onMiddleDragging(dataIndex, this);
-            },
-            i,
-            this
-          ),
-        };
-        graphicList[step + 2] = {
-          // 'circle' 表示这个 graphic element 的类型是圆点。
-          type: "circle",
-
-          shape: {
-            // 圆点的半径。
-            r: 10,
-          },
-          // 用 transform 的方式对圆点进行定位。position: [x, y] 表示将圆点平移到 [x, y] 位置。
-          // 这里使用了 convertToPixel 这个 API 来得到每个圆点的位置，下面介绍。
-          position: this.myChart.convertToPixel("grid", [
-            this.dataList[i]+value,
-            this.option.yAxis.data[i] - 1,
-          ]),
-
-          // 这个属性让圆点不可见（但是不影响他响应鼠标事件）。
-          invisible: true,
-          // 这个属性让圆点可以被拖拽。
-          draggable: true,
-          // 把 z 值设得比较大，表示这个圆点在最上方，能覆盖住已有的折线图的圆点。
-          z: 100,
-          // 此圆点的拖拽的响应事件，在拖拽过程中会不断被触发。下面介绍详情。
-          // 这里使用了 echarts.util.curry 这个帮助方法，意思是生成一个与 onPointDragging
-          // 功能一样的新的函数，只不过第一个参数永远为此时传入的 dataIndex 的值。
-          ondrag: this.$echarts.util.curry(
-            function (dataIndex, that) {
-              that.onEndDragging(dataIndex, this);
-            },
-            i,
-            this
-          ),
-        };
-      }
-      this.myChart.setOption({
-        graphic: graphicList,
-      });
     },
   },
 };

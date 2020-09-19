@@ -254,7 +254,6 @@ export default {
     height: 100px;
   }
 
-  max-width: 800px;
   width: 90%;
   margin: 0px auto;
   .upload {
